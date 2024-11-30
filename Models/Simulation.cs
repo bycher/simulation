@@ -1,36 +1,47 @@
+using Simulation.Models.Actions;
 using Simulation.Services;
 
 namespace Simulation.Models;
 
 public class Simulation
 {
-    public Map Map { get; set; }
-    public MapRenderer MapRenderer { get; set; }
-
-    public List<Action> InitActions { get; set; }
-    public List<Action> TurnActions { get; set; }
-    
-    public int TurnsCount { get; set; }
-
     private bool _isRunning = true;
 
-    public Simulation(SimulationOptions options)
+    public Map Map { get; set; }
+    public MapRenderer MapRenderer { get; set; }
+    public List<Actions.Action> InitActions { get; set; }
+    public List<Actions.Action> TurnActions { get; set; }
+    public int TurnsCount { get; set; }
+
+    public Simulation(SimulationParams options)
     {
         Map = new(options.N, options.M);
         MapRenderer = new(Map);
 
         InitActions = [
-            new ArrangeAction<Rock>(Map, options.RocksNumber),
+            new ArrangeEntities<Rock>(Map, options.RocksNumber, _ => new Rock()),
+            new ArrangeEntities<Tree>(Map, options.TreeNumber, _ => new Tree()),
+            new ArrangeEntities<Grass>(Map, options.GrassNumber, _ => new Grass()),
+            new ArrangeEntities<Herbivore>(
+                Map,
+                options.HerbivoreNumber,
+                position => new Herbivore(
+                    options.HerbivoreSpeed,
+                    options.HerbivoreHealth,
+                    Map,
+                    position)),
         ];
 
-        TurnActions = [];
+        TurnActions = [
+            new MoveCreatures(Map, MapRenderer),
+        ];
     }
 
     public void StartSimulation()
     {
         // do init actions
         foreach (var action in InitActions)
-            action.Act();
+            action.Execute();
 
         // do initial rendering 
         MapRenderer.Render();
@@ -45,10 +56,12 @@ public class Simulation
 
     public void NextTurn()
     {
+        TurnsCount++;
+
         // do turn actions
         foreach (var action in TurnActions)
-            action.Act();
-        
+            action.Execute();
+
         // do rendering 
         MapRenderer.Render();
     }

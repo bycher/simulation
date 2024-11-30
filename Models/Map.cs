@@ -2,41 +2,87 @@ namespace Simulation.Models;
 
 public class Map
 {
-    private readonly Dictionary<Position, Entity> _field;
-
     public int N { get; set; }
     public int M { get; set; }
+    
+    public List<Creature> Creatures => _entities.Values
+                                                .SelectMany(e => e)
+                                                .Where(e => e is Creature)
+                                                .Cast<Creature>()
+                                                .ToList();
+
+    private readonly Dictionary<Position, List<Entity>> _entities = [];
 
     public Map(int n, int m)
     {
         N = n;
         M = m;
-        _field = [];
+
+        AddPaddings();
     }
 
-    public bool IsPositionTaken(Position position)
+    public bool IsPositionFree(Position coordinates)
     {
-        return _field.ContainsKey(position);
+        return !_entities.ContainsKey(coordinates);
     }
 
     public void PlaceEntity(Position position, Entity entity)
     {
-        _field[position] = entity;
+        var entitiesAtPosition = GetEntitiesAtPosition(position);
+
+        if (entitiesAtPosition is null)
+            _entities[position] = [entity];
+        else
+            entitiesAtPosition.Add(entity);
     }
 
-    public bool TryGetEntity(Position position, out Entity? entity)
+    public void PlaceEntity(int x, int y, Entity entity)
     {
-        entity = null;
+        PlaceEntity(new Position(x, y), entity);
+    }
 
-        foreach (var key in _field.Keys)
+    public List<Entity>? GetEntitiesAtPosition(int x, int y)
+    {
+        return GetEntitiesAtPosition(new Position(x, y));
+    }
+
+    public List<Entity>? GetEntitiesAtPosition(Position position)
+    {
+        _entities.TryGetValue(position, out var value);
+        return value;
+    }
+
+    public void RemoveEntity(Position position)
+    {
+        var entitiesAtPosition = GetEntitiesAtPosition(position) ??
+            throw new NullReferenceException("No entities at position");
+
+        if (entitiesAtPosition.Count == 1)
+            _entities.Remove(position);
+        else
+            entitiesAtPosition.RemoveAt(0);
+    }
+
+    public bool CanBePassedThrough(Position position)
+    {
+        var entitiesAtPosition = GetEntitiesAtPosition(position);
+
+        return entitiesAtPosition is null ||
+            entitiesAtPosition.Count == 1 && entitiesAtPosition[0] is Grass;
+    }
+
+    private void AddPaddings()
+    {
+        for (int i = 0; i < N; i++)
         {
-            if (key.Equals(position))
-            {
-                entity = _field[key];
-                return true;
-            }
+            PlaceEntity(i, -1, new Rock());
+            PlaceEntity(i, M, new Rock());
         }
 
-        return false;
-    } 
+        for (int i = 0; i < M; i++)
+        {
+            PlaceEntity(-1, i, new Rock());
+            PlaceEntity(N, i, new Rock());
+        }
+    }
 }

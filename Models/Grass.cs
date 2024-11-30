@@ -1,6 +1,6 @@
 namespace Simulation.Models;
 
-public class Rock : Entity
+public class Grass : Entity
 {
-    
+
 }

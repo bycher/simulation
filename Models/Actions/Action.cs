@@ -1,4 +1,4 @@
-namespace Simulation.Models;
+namespace Simulation.Models.Actions;
 
 public abstract class Action
 {
@@ -9,5 +9,5 @@ public abstract class Action
         _map = map;
     }
 
-    public abstract void Act();
+    public abstract void Execute();
 }

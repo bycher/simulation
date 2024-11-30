@@ -9,30 +9,42 @@ public class MapRenderer
     public MapRenderer(Map map)
     {
         _map = map;
-    }  
+    }
 
     public void Render()
     {
         Console.Clear();
-        
-        for (int i = 0; i < _map.N; i++)
+
+        for (var x = 0; x < _map.N; x++)
         {
-            for (int j = 0; j < _map.M; j++)
+            for (var y = 0; y < _map.M; y++)
             {
-                if (!_map.TryGetEntity(new Position(i, j), out var entity))
-                    Console.Write(".");
-                else
-                    Console.Write(GetImageForEntity(entity));
+                var entities = _map.GetEntitiesAtPosition(x, y);
+
+                if (y > 0)
+                    Console.Write(" ");
+                Console.Write(GetCharForCell(entities));
             }
+
             Console.WriteLine();
         }
     }
 
-    private static string GetImageForEntity(Entity? entity)
+    private static char GetCharForCell(List<Entity>? entities)
     {
-        if (entity is Rock)
-            return "#";
-
-        throw new ArgumentException("Unknown entity");
+        if (entities is null)
+            return '.';
+        
+        if (entities.Count == 2)
+            return '\u1e2a';
+        
+        return entities[0] switch 
+        {
+            Rock => '#',
+            Tree => '*',
+            Grass => '^',
+            Herbivore => 'H',
+            _ => throw new ArgumentException("Unknown entity")
+        };
     }
 }
