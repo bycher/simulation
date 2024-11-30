@@ -2,21 +2,11 @@ using Simulation.Models;
 
 namespace Simulation.Services;
 
-public class ResourceSearcher
+public class ResourceSearcher(Map map)
 {
-    private readonly Map _map;
-    private readonly Creature _creature;
-    private readonly Predicate<Position> _resourceFoundCondition;
+    private readonly Map _map = map;
 
-    public ResourceSearcher(
-        Map map, Creature creature, Predicate<Position> resourceFoundCondition)
-    {
-        _creature = creature;
-        _map = map;
-        _resourceFoundCondition = resourceFoundCondition;
-    }
-
-    public List<Position> FindResource(Position start)
+    public List<Position> FindResource(Position start, Predicate<Position> resourceFoundCondition, Entity subject)
     {
         var visited = new List<Position>();
         var transitions = new Dictionary<Position, Position>();
@@ -28,11 +18,11 @@ public class ResourceSearcher
         while (queue.Count > 0)
         {
             var position = queue.Dequeue();
-            if (_resourceFoundCondition(position))
+            if (resourceFoundCondition(position))
                 return ConstructPath(start, position, transitions);
 
             foreach (var adjacent in position.Adjacents)
-                if (!visited.Contains(adjacent) && _map.CanBePassedThrough(adjacent))
+                if (!visited.Contains(adjacent) && _map.CanBePassedThrough(adjacent, subject))
                 {
                     visited.Add(adjacent);
                     transitions[adjacent] = position;

@@ -30,6 +30,15 @@ public class Simulation
                     options.HerbivoreHealth,
                     Map,
                     position)),
+            new ArrangeEntities<Predator>(
+                Map,
+                options.PredatorNumber,
+                position => new Predator(
+                    Map,
+                    options.PredatorSpeed,
+                    options.PredatorHealth,
+                    position,
+                    options.PredatorAttack)),
         ];
 
         TurnActions = [

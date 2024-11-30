@@ -12,10 +12,15 @@ internal class Program
             RocksNumber = 3,
             TreeNumber = 3,
             GrassNumber = 5,
-            HerbivoreNumber = 3,
 
+            HerbivoreNumber = 3,
             HerbivoreSpeed = 1,
-            HerbivoreHealth = 1,
+            HerbivoreHealth = 4,
+
+            PredatorNumber = 3,
+            PredatorSpeed = 2,
+            PredatorHealth = 1,
+            PredatorAttack = 2, 
         };
 
         var simulation = new Simulation.Models.Simulation(simulationParams);

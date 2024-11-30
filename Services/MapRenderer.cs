@@ -1,3 +1,4 @@
+using System.Text;
 using Simulation.Models;
 
 namespace Simulation.Services;
@@ -19,32 +20,40 @@ public class MapRenderer
         {
             for (var y = 0; y < _map.M; y++)
             {
-                var entities = _map.GetEntitiesAtPosition(x, y);
+                var cell = _map.GetCell(x, y);
 
                 if (y > 0)
                     Console.Write(" ");
-                Console.Write(GetCharForCell(entities));
+                Console.Write($"{GetCellState(cell), 4}");
             }
 
             Console.WriteLine();
         }
     }
 
-    private static char GetCharForCell(List<Entity>? entities)
+    private static string GetCellState(Cell? cell)
     {
-        if (entities is null)
-            return '.';
+        if (cell is null)
+            return ".";
         
-        if (entities.Count == 2)
-            return '\u1e2a';
-        
-        return entities[0] switch 
+        var state = new StringBuilder();
+        foreach (var property in cell.GetType().GetProperties())
         {
-            Rock => '#',
-            Tree => '*',
-            Grass => '^',
-            Herbivore => 'H',
-            _ => throw new ArgumentException("Unknown entity")
-        };
+            var value = property.GetValue(cell);
+            if (value != null)
+                state = state.Append(GetEntityImage((Entity)value));
+        }
+
+        return state.ToString();
     }
+
+    private static string GetEntityImage(Entity entity) => entity switch
+    {
+        Rock => "#",
+        Tree => "*",
+        Grass => "^",
+        Herbivore => "H",
+        Predator => "P",
+        _ => throw new ArgumentException("Unknown entity")
+    };
 }

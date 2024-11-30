@@ -4,14 +4,14 @@ public class Map
 {
     public int N { get; set; }
     public int M { get; set; }
-    
+
     public List<Creature> Creatures => _entities.Values
-                                                .SelectMany(e => e)
-                                                .Where(e => e is Creature)
+                                                .SelectMany(c => new List<Creature?> { c.Herbivore, c.Predator })
+                                                .Where(c => c != null)
                                                 .Cast<Creature>()
                                                 .ToList();
 
-    private readonly Dictionary<Position, List<Entity>> _entities = [];
+    private readonly Dictionary<Position, Cell> _entities = [];
 
     public Map(int n, int m)
     {
@@ -21,19 +21,23 @@ public class Map
         AddPaddings();
     }
 
-    public bool IsPositionFree(Position coordinates)
+    public bool IsPositionFree(Position position)
     {
-        return !_entities.ContainsKey(coordinates);
+        return !_entities.ContainsKey(position);
     }
 
     public void PlaceEntity(Position position, Entity entity)
     {
-        var entitiesAtPosition = GetEntitiesAtPosition(position);
-
-        if (entitiesAtPosition is null)
-            _entities[position] = [entity];
-        else
-            entitiesAtPosition.Add(entity);
+        var cell = GetCell(position);
+        
+        if (cell is null)
+            _entities[position] = new Cell();
+        
+        foreach (var property in _entities[position].GetType().GetProperties())
+        {
+            if (property.PropertyType == entity.GetType())
+                property.SetValue(_entities[position], entity);
+        }
     }
 
     public void PlaceEntity(int x, int y, Entity entity)
@@ -41,34 +45,45 @@ public class Map
         PlaceEntity(new Position(x, y), entity);
     }
 
-    public List<Entity>? GetEntitiesAtPosition(int x, int y)
+    public Cell? GetCell(int x, int y)
     {
-        return GetEntitiesAtPosition(new Position(x, y));
+        return GetCell(new Position(x, y));
     }
 
-    public List<Entity>? GetEntitiesAtPosition(Position position)
+    public Cell? GetCell(Position position)
     {
         _entities.TryGetValue(position, out var value);
         return value;
     }
 
-    public void RemoveEntity(Position position)
+    public void RemoveEntity(Position position, Type entityType)
     {
-        var entitiesAtPosition = GetEntitiesAtPosition(position) ??
+        var cell = GetCell(position) ??
             throw new NullReferenceException("No entities at position");
 
-        if (entitiesAtPosition.Count == 1)
+        var properties = cell.GetType().GetProperties();
+        foreach (var property in properties)
+        {
+            if (property.PropertyType == entityType)
+                property.SetValue(cell, null);
+        }
+
+        bool needEliminate = true;
+        foreach (var property in properties)
+            if (property.GetValue(cell) != null)
+                needEliminate = false;
+        if (needEliminate)
             _entities.Remove(position);
-        else
-            entitiesAtPosition.RemoveAt(0);
     }
 
-    public bool CanBePassedThrough(Position position)
+    public bool CanBePassedThrough(Position position, Entity subject)
     {
-        var entitiesAtPosition = GetEntitiesAtPosition(position);
+        var cell = GetCell(position);
 
-        return entitiesAtPosition is null ||
-            entitiesAtPosition.Count == 1 && entitiesAtPosition[0] is Grass;
+        return cell is null ||
+               cell.Rock is null && cell.Tree is null &&
+               (subject is Herbivore && cell.Herbivore == null && cell.Predator == null ||
+                subject is Predator && cell.Predator == null);
     }
 
     private void AddPaddings()
