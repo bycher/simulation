@@ -12,7 +12,7 @@ public class Map
                                                 .Cast<Creature>().ToList();
 
     private readonly Dictionary<Position, Entity> _entities = [];
-    private readonly MapRenderer _renderer; 
+    private readonly ConsoleRenderer _renderer;
 
     public Map(int n, int m)
     {

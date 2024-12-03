@@ -1,32 +1,30 @@
 namespace Simulation.Models.Actions;
 
-public class ArrangeEntities<T>(
-    Map map, int entitiesNumber, Func<Position, T> entityFactory) : Action(map)
+public class ArrangeEntities<T>(int entitiesNumber, Func<Position, T> entityFactory) : Action
     where T : Entity
 {
     private readonly int _entitiesNumber = entitiesNumber;
     private readonly Func<Position, T> _entityFactory = entityFactory;
-    private readonly Random _random = new();
 
-    public override void Execute()
+    public override void Execute(Map map)
     {
         for (int i = 0; i < _entitiesNumber; i++)
         {
-            var position = GetRandomPosition();
-            _map.PlaceEntity(position, _entityFactory(position));
+            var position = GetRandomPosition(map);
+            map.PlaceEntity(position, _entityFactory(position));
         }
     }
 
-    private Position GetRandomPosition()
+    private static Position GetRandomPosition(Map map)
     {
         Position position;
         do
         {
-            int x = _random.Next(_map.N);
-            int y = _random.Next(_map.M);
-            position = new Position(x, y);
+            var random = new Random();
+            position = new Position(random.Next(map.N),
+                                    random.Next(map.M));
         }
-        while (!_map.IsPositionFree(position));
+        while (!map.IsPositionFree(position));
         
         return position;
     }

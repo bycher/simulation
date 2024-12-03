@@ -1,8 +1,6 @@
 namespace Simulation.Models.Actions;
 
-public abstract class Action(Map map)
+public abstract class Action
 {
-    protected readonly Map _map = map;
-
-    public abstract void Execute();
+    public abstract void Execute(Map map);
 }

@@ -1,22 +1,24 @@
+using Simulation.Services;
+
 namespace Simulation.Models;
 
-public class Predator(Map map, int speed, int health, int attack, Position currentPosition, string name)
-    : Creature<Herbivore>(map, speed, health, currentPosition, name)
+public class Predator(int speed, int health, int attack, Position currentPosition,
+                    IResourceSearcher resourceSearcher)
+    : Creature<Herbivore>(speed, health, currentPosition, resourceSearcher)
 {
     public int Attack { get; set; } = attack;
 
-    protected override bool TryConsumeResource(Position position)
+    protected override bool TryConsumeResource(Map map, Position position)
     {
-        _map.TryGetEntity(position, out var entity);
-        
+        map.TryGetEntity(position, out var entity);
+
         var herbivore = (Herbivore)entity!;
         herbivore.Health -= Attack;
         if (herbivore.Health <= 0)
         {
             Console.WriteLine($"Predator killed the herbivore at {position}");
-            _map.RemoveEntity(position);
+            map.RemoveEntity(position);
             FindNewPath(position);
-            return true;
         }
         else
         {
@@ -25,6 +27,6 @@ public class Predator(Map map, int speed, int health, int attack, Position curre
             _stepsInPath--;
         }
 
-        return false;
+        return herbivore.Health <= 0;
     }
 }

@@ -6,7 +6,7 @@ namespace Simulation.Models;
 public class Simulation
 {
     public Map Map { get; set; }
-    public MapRenderer MapRenderer { get; set; }
+    public ConsoleRenderer MapRenderer { get; set; }
     public List<Actions.Action> InitActions { get; set; }
     public List<Actions.Action> TurnActions { get; set; }
     public int TurnsCount { get; set; }
@@ -19,32 +19,28 @@ public class Simulation
         MapRenderer = new(Map);
 
         InitActions = [
-            new ArrangeEntities<Rock>(Map, options.RocksNumber, _ => new Rock()),
-            new ArrangeEntities<Tree>(Map, options.TreeNumber, _ => new Tree()),
-            new ArrangeEntities<Grass>(Map, options.GrassNumber, _ => new Grass()),
+            new ArrangeEntities<Rock>(options.RocksNumber, _ => new Rock()),
+            new ArrangeEntities<Tree>(options.TreeNumber, _ => new Tree()),
+            new ArrangeEntities<Grass>(options.GrassNumber, _ => new Grass()),
             new ArrangeEntities<Herbivore>(
-                Map,
                 options.HerbivoreNumber,
                 position => new Herbivore(
-                    Map,
                     options.HerbivoreSpeed,
                     options.HerbivoreHealth,
                     position,
-                    "Herbivore")),
+                    new ResourceSearcher<Grass>(Map))),
             new ArrangeEntities<Predator>(
-                Map,
                 options.PredatorNumber,
                 position => new Predator(
-                    Map,
                     options.PredatorSpeed,
                     options.PredatorHealth,
                     options.PredatorAttack,
                     position,
-                    "Predator")),
+                    new ResourceSearcher<Herbivore>(Map))),
         ];
 
         TurnActions = [
-            new MoveCreatures(Map, MapRenderer, _pauseEvent),
+            new MoveCreatures(MapRenderer, _pauseEvent),
         ];
     }
 
@@ -53,7 +49,7 @@ public class Simulation
         new Thread(() =>
         {
             foreach (var action in InitActions)
-                action.Execute();
+                action.Execute(Map);
 
             MapRenderer.Render();
 
@@ -103,7 +99,7 @@ public class Simulation
         foreach (var action in TurnActions)
         {
             _pauseEvent.WaitOne();
-            action.Execute();
+            action.Execute(Map);
         }
     }
 }

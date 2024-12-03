@@ -2,7 +2,7 @@ using Simulation.Models;
 
 namespace Simulation.Services;
 
-public class ResourceSearcher<TResource>(Map map) where TResource : Entity
+public class ResourceSearcher<TResource>(Map map) : IResourceSearcher where TResource : Entity
 {
     private readonly Map _map = map;
 

@@ -1,20 +1,20 @@
-using Simulation.Services;
+using Simulation.Services.Interfaces;
 
 namespace Simulation.Models.Actions;
 
-public class MoveCreatures(Map map, MapRenderer mapRenderer, ManualResetEvent pauseEvent) : Action(map)
+public class MoveCreatures(IMapRenderer mapRenderer, ManualResetEvent pauseEvent) : Action
 {
-    private readonly MapRenderer _mapRenderer = mapRenderer;
+    private readonly IMapRenderer _mapRenderer = mapRenderer;
     private readonly ManualResetEvent _pauseEvent = pauseEvent;
 
-    public override void Execute()
+    public override void Execute(Map map)
     {
-        foreach (var creature in _map.Creatures)
+        foreach (var creature in map.Creatures)
         {
-            _pauseEvent!.WaitOne();
+            _pauseEvent.WaitOne();
             _mapRenderer.Render();
-            creature.MakeMove();
             Thread.Sleep(2000);
+            creature.MakeMove(map);
         }
     }
 }

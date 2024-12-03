@@ -1,8 +1,9 @@
 using Simulation.Models;
+using Simulation.Services.Interfaces;
 
 namespace Simulation.Services;
 
-public class MapRenderer(Map map)
+public class ConsoleRenderer(Map map) : IMapRenderer
 {
     private readonly Map _map = map;
 
@@ -16,7 +17,7 @@ public class MapRenderer(Map map)
             {
                 if (y > 0)
                     Console.Write(" ");
-                
+
                 _map.TryGetEntity(x, y, out var entity);
                 Console.Write(GetEntityImage(entity));
             }

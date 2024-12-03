@@ -2,52 +2,50 @@ using Simulation.Services;
 
 namespace Simulation.Models;
 
-public abstract class Creature(Map map, int speed, int health, Position currentPosition, string name) : Entity
+public abstract class Creature(int speed, int health, Position currentPosition) : Entity
 {
-    protected readonly Map _map = map;
     protected Position _currentPosition = currentPosition;
     protected List<Position> _path = [];
     protected int _stepsInPath;
-    protected string _name = name;
 
     public int Speed { get; set; } = speed;
     public int Health { get; set; } = health;
 
-    public abstract void MakeMove();
+    public abstract void MakeMove(Map map);
 }
 
-public abstract class Creature<TResource>(Map map, int speed, int health,
-                                          Position currentPosition, string name)
-    : Creature(map, speed, health, currentPosition, name)
+public abstract class Creature<TResource>(int speed, int health, Position currentPosition,
+                                          IResourceSearcher resourceSearcher)
+    : Creature(speed, health, currentPosition)
     where TResource : Entity
 {
-    protected ResourceSearcher<TResource> _resourceSearcher = new(map);
+    protected IResourceSearcher _resourceSearcher = resourceSearcher;
 
-    protected abstract bool TryConsumeResource(Position resourcePosition);
+    protected abstract bool TryConsumeResource(Map map, Position position);
 
-    public override void MakeMove()
+    public override void MakeMove(Map map)
     {
         FindNewPath(_currentPosition);
-        
+
         for (var _ = 0; _ < Speed && _path.Count > 0; _++)
         {
             var nextPosition = _path[_stepsInPath++];
             if (_stepsInPath == _path.Count)
             {
-                var resourceConsumed = TryConsumeResource(nextPosition);
+                var resourceConsumed = TryConsumeResource(map, nextPosition);
                 if (resourceConsumed)
-                    ChangePosition(nextPosition);
+                    ChangePosition(map, nextPosition);
             }
             else
-                ChangePosition(nextPosition);
+                ChangePosition(map, nextPosition);
         }
     }
 
-    public void ChangePosition(Position newPosition)
+    public void ChangePosition(Map map, Position newPosition)
     {
-        _map.RemoveEntity(_currentPosition);
-        _map.PlaceEntity(newPosition, this);
-        Console.WriteLine($"{_name} made step from {_currentPosition} to {newPosition}");
+        map.RemoveEntity(_currentPosition);
+        map.PlaceEntity(newPosition, this);
+        Console.WriteLine($"{this} made step from {_currentPosition} to {newPosition}");
         _currentPosition = newPosition;
     }
 
