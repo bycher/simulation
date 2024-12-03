@@ -1,25 +1,27 @@
 using Simulation.Models.Actions;
 using Simulation.Models.Entities;
 using Simulation.Services;
+using Simulation.Services.Interfaces;
+using Action = Simulation.Models.Actions.Action;
 
 namespace Simulation.Models;
 
 public class Simulation
 {
-    public Map Map { get; set; }
-    public ConsoleRenderer MapRenderer { get; set; }
-    public List<Actions.Action> InitActions { get; set; }
-    public List<Actions.Action> TurnActions { get; set; }
-    public int TurnsCount { get; set; }
+    private readonly Map _map;
+    private readonly IMapRenderer _mapRenderer;
+
+    private readonly List<Action> _initActions;
+    private readonly List<Action> _turnActions;
 
     private readonly ManualResetEvent _pauseEvent = new(true);
 
     public Simulation(SimulationParams options)
     {
-        Map = new(options.N, options.M);
-        MapRenderer = new(Map);
+        _map = new(options.N, options.M);
+        _mapRenderer = new ConsoleRenderer(_map);
 
-        InitActions = [
+        _initActions = [
             new ArrangeEntities<Rock>(options.RocksNumber, _ => new Rock()),
             new ArrangeEntities<Tree>(options.TreeNumber, _ => new Tree()),
             new ArrangeEntities<Grass>(options.GrassNumber, _ => new Grass()),
@@ -29,7 +31,7 @@ public class Simulation
                     options.HerbivoreSpeed,
                     options.HerbivoreHealth,
                     position,
-                    new ResourceSearcher<Grass>(Map))),
+                    new ResourceSearcher<Grass>(_map))),
             new ArrangeEntities<Predator>(
                 options.PredatorNumber,
                 position => new Predator(
@@ -37,11 +39,11 @@ public class Simulation
                     options.PredatorHealth,
                     options.PredatorAttack,
                     position,
-                    new ResourceSearcher<Herbivore>(Map))),
+                    new ResourceSearcher<Herbivore>(_map))),
         ];
 
-        TurnActions = [
-            new MoveCreatures(MapRenderer, _pauseEvent),
+        _turnActions = [
+            new MoveCreatures(_mapRenderer, _pauseEvent),
         ];
     }
 
@@ -49,15 +51,15 @@ public class Simulation
     {
         new Thread(() =>
         {
-            foreach (var action in InitActions)
-                action.Execute(Map);
+            foreach (var action in _initActions)
+                action.Execute(_map);
 
-            MapRenderer.Render();
+            _mapRenderer.Render();
 
             while (true)
             {
                 NextTurn();
-                MapRenderer.Render();
+                _mapRenderer.Render();
                 Thread.Sleep(1000);
             }
         })
@@ -70,23 +72,22 @@ public class Simulation
 
     private void ListenForInput()
     {
-        // Слушаем ввод пользователя в отдельном потоке
         new Thread(() =>
         {
             while (true)
             {
                 var key = Console.ReadKey(intercept: true).Key;
-                if (key == ConsoleKey.Spacebar) // Например, пробел для паузы/возобновления
+                if (key == ConsoleKey.Spacebar)
                 {
-                    if (_pauseEvent.WaitOne(0)) // Если не на паузе
+                    if (_pauseEvent.WaitOne(0))
                     {
                         Console.WriteLine("Симуляция на паузе...");
-                        _pauseEvent.Reset(); // Ставим на паузу
+                        _pauseEvent.Reset();
                     }
                     else
                     {
                         Console.WriteLine("Симуляция возобновлена...");
-                        _pauseEvent.Set(); // Снимаем с паузы
+                        _pauseEvent.Set();
                     }
                 }
             }
@@ -95,12 +96,10 @@ public class Simulation
 
     private void NextTurn()
     {
-        TurnsCount++;
-
-        foreach (var action in TurnActions)
+        foreach (var action in _turnActions)
         {
             _pauseEvent.WaitOne();
-            action.Execute(Map);
+            action.Execute(_map);
         }
     }
 }
