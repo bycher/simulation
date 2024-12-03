@@ -1,6 +1,6 @@
 namespace Simulation.Models;
 
-public class Rock : StaticObject
+public class Rock : Entity
 {
 
 }
