@@ -1,6 +1,8 @@
+using Simulation.Models;
+
 namespace Simulation.Services.Interfaces;
 
 public interface IMapRenderer
 {
-    void Render();
+    void Render(Map map);
 }

@@ -1,3 +1,4 @@
+using Serilog;
 using Simulation.Services;
 
 namespace Simulation.Models.Entities;
@@ -15,11 +16,11 @@ public abstract class Creature(int speed, int health, Position currentPosition) 
 }
 
 public abstract class Creature<TResource>(int speed, int health, Position currentPosition,
-                                          IResourceSearcher resourceSearcher)
-    : Creature(speed, health, currentPosition)
-    where TResource : Entity
+                                          IResourceSearcher resourceSearcher, ILogger logger)
+    : Creature(speed, health, currentPosition) where TResource : Entity
 {
-    protected IResourceSearcher _resourceSearcher = resourceSearcher;
+    protected readonly ILogger _logger = logger;
+    protected readonly IResourceSearcher _resourceSearcher = resourceSearcher;
 
     protected abstract bool TryConsumeResource(Map map, Position position);
 
@@ -45,7 +46,8 @@ public abstract class Creature<TResource>(int speed, int health, Position curren
     {
         map.RemoveEntity(_currentPosition);
         map.PlaceEntity(newPosition, this);
-        Console.WriteLine($"{this} made step from {_currentPosition} to {newPosition}");
+        _logger.Information($"{GetType().Name} made step from {_currentPosition} to {newPosition}");
+        
         _currentPosition = newPosition;
     }
 

@@ -1,5 +1,6 @@
 using Simulation.Models.Entities;
 using Simulation.Services;
+using Simulation.Services.Interfaces;
 
 namespace Simulation.Models;
 
@@ -13,14 +14,14 @@ public class Map
                                                 .Cast<Creature>().ToList();
 
     private readonly Dictionary<Position, Entity> _entities = [];
-    private readonly ConsoleRenderer _renderer;
+    private readonly IMapRenderer _renderer;
 
-    public Map(int n, int m)
+    public Map(int n, int m, IMapRenderer renderer)
     {
         N = n;
         M = m;
-        _renderer = new(this);
         AddPaddings();
+        _renderer = renderer;
     }
 
     public bool IsPositionFree(Position position)

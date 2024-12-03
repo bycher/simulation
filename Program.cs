@@ -1,4 +1,6 @@
-﻿using Simulation.Models;
+﻿using Serilog;
+using Simulation.Models;
+using Simulation.Services;
 
 internal class Program
 {
@@ -20,7 +22,13 @@ internal class Program
             PredatorAttack = 2,
         };
 
-        var simulation = new Simulation.Models.Simulation(simulationParams);
+        var logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .CreateLogger();
+
+        var simulation = new Simulation.Models.Simulation(
+            simulationParams, new ConsoleRenderer(), logger);
+            
         simulation.Start();
     }
 }

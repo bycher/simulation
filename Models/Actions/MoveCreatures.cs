@@ -12,9 +12,9 @@ public class MoveCreatures(IMapRenderer mapRenderer, ManualResetEvent pauseEvent
         foreach (var creature in map.Creatures)
         {
             _pauseEvent.WaitOne();
-            _mapRenderer.Render();
-            Thread.Sleep(2000);
+            _mapRenderer.Render(map);
             creature.MakeMove(map);
+            Thread.Sleep(2000);
         }
     }
 }

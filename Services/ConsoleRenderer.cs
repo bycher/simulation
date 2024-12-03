@@ -4,22 +4,20 @@ using Simulation.Services.Interfaces;
 
 namespace Simulation.Services;
 
-public class ConsoleRenderer(Map map) : IMapRenderer
+public class ConsoleRenderer : IMapRenderer
 {
-    private readonly Map _map = map;
-
-    public void Render()
+    public void Render(Map map)
     {
         Console.Clear();
 
-        for (int x = 0; x < _map.N; x++)
+        for (int x = 0; x < map.N; x++)
         {
-            for (int y = 0; y < _map.M; y++)
+            for (int y = 0; y < map.M; y++)
             {
                 if (y > 0)
                     Console.Write(" ");
 
-                _map.TryGetEntity(x, y, out var entity);
+                map.TryGetEntity(x, y, out var entity);
                 Console.Write(GetEntityImage(entity));
             }
             Console.WriteLine();

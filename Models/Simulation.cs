@@ -1,3 +1,4 @@
+using Serilog;
 using Simulation.Models.Actions;
 using Simulation.Models.Entities;
 using Simulation.Services;
@@ -10,16 +11,18 @@ public class Simulation
 {
     private readonly Map _map;
     private readonly IMapRenderer _mapRenderer;
+    private readonly ILogger _logger;
 
     private readonly List<Action> _initActions;
     private readonly List<Action> _turnActions;
 
     private readonly ManualResetEvent _pauseEvent = new(true);
 
-    public Simulation(SimulationParams options)
+    public Simulation(SimulationParams options, IMapRenderer mapRenderer, ILogger logger)
     {
-        _map = new(options.N, options.M);
-        _mapRenderer = new ConsoleRenderer(_map);
+        _map = new(options.N, options.M, mapRenderer);
+        _mapRenderer = mapRenderer;
+        _logger = logger;
 
         _initActions = [
             new ArrangeEntities<Rock>(options.RocksNumber, _ => new Rock()),
@@ -31,7 +34,8 @@ public class Simulation
                     options.HerbivoreSpeed,
                     options.HerbivoreHealth,
                     position,
-                    new ResourceSearcher<Grass>(_map))),
+                    new ResourceSearcher<Grass>(_map),
+                    logger)),
             new ArrangeEntities<Predator>(
                 options.PredatorNumber,
                 position => new Predator(
@@ -39,7 +43,8 @@ public class Simulation
                     options.PredatorHealth,
                     options.PredatorAttack,
                     position,
-                    new ResourceSearcher<Herbivore>(_map))),
+                    new ResourceSearcher<Herbivore>(_map),
+                    logger)),
         ];
 
         _turnActions = [
@@ -54,12 +59,12 @@ public class Simulation
             foreach (var action in _initActions)
                 action.Execute(_map);
 
-            _mapRenderer.Render();
+            _mapRenderer.Render(_map);
 
             while (true)
             {
                 NextTurn();
-                _mapRenderer.Render();
+                _mapRenderer.Render(_map);
                 Thread.Sleep(1000);
             }
         })
@@ -76,17 +81,17 @@ public class Simulation
         {
             while (true)
             {
-                var key = Console.ReadKey(intercept: true).Key;
+                var key = Console.ReadKey(true).Key;
                 if (key == ConsoleKey.Spacebar)
                 {
                     if (_pauseEvent.WaitOne(0))
                     {
-                        Console.WriteLine("Симуляция на паузе...");
+                        _logger.Information("Simulation is paused...");
                         _pauseEvent.Reset();
                     }
                     else
                     {
-                        Console.WriteLine("Симуляция возобновлена...");
+                        _logger.Information("Simulation is resumed...");
                         _pauseEvent.Set();
                     }
                 }

@@ -1,10 +1,11 @@
+using Serilog;
 using Simulation.Services;
 
 namespace Simulation.Models.Entities;
 
 public class Predator(int speed, int health, int attack, Position currentPosition,
-                    IResourceSearcher resourceSearcher)
-    : Creature<Herbivore>(speed, health, currentPosition, resourceSearcher)
+                    IResourceSearcher resourceSearcher, ILogger logger)
+    : Creature<Herbivore>(speed, health, currentPosition, resourceSearcher, logger)
 {
     public int Attack { get; set; } = attack;
 
@@ -16,13 +17,13 @@ public class Predator(int speed, int health, int attack, Position currentPositio
         herbivore.Health -= Attack;
         if (herbivore.Health <= 0)
         {
-            Console.WriteLine($"Predator killed the herbivore at {position}");
+            _logger.Information($"Predator killed the herbivore at {position}");
             map.RemoveEntity(position);
             FindNewPath(position);
         }
         else
         {
-            Console.WriteLine($"Predator at {_currentPosition} attacked the herbivore at {position}," +
+            _logger.Information($"Predator at {_currentPosition} attacked the herbivore at {position}," +
                             $" remaining health: {herbivore.Health}");
             _stepsInPath--;
         }
