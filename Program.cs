@@ -27,8 +27,8 @@ internal class Program
             .CreateLogger();
 
         var simulation = new Simulation.Models.Simulation(
-            simulationParams, new ConsoleRenderer(), logger);
-            
+            simulationParams, new ConsoleMapRenderer(), logger);
+
         simulation.Start();
     }
 }

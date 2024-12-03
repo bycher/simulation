@@ -4,7 +4,7 @@ using Simulation.Services.Interfaces;
 
 namespace Simulation.Services;
 
-public class ConsoleRenderer : IMapRenderer
+public class ConsoleMapRenderer : IMapRenderer
 {
     public void Render(Map map)
     {
