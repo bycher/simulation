@@ -1,43 +1,30 @@
-using Simulation.Services;
-
 namespace Simulation.Models;
 
-public class Predator : Creature
+public class Predator(Map map, int speed, int health, int attack, Position currentPosition, string name)
+    : Creature<Herbivore>(map, speed, health, currentPosition, name)
 {
-    public int Attack { get; set; }
+    public int Attack { get; set; } = attack;
 
-    public Predator(Map map, int speed, int health, Position currentPosition, int attack)
-        : base(map, speed, health, currentPosition)
+    protected override bool TryConsumeResource(Position position)
     {
-        Attack = attack;
-    }
-
-    public override void MakeMove()
-    {
-        var searcher = new ResourceSearcher(_map);
-        _pathToResource = searcher.FindResource(_currentPosition, IsResourceFound, this);
-
-        if (_pathToResource.Count == 0)
-            return;
-
-        _map.RemoveEntity(_currentPosition, typeof(Predator));
-        var steps = Math.Min(Speed, _pathToResource.Count - 1);
-        _currentPosition = _pathToResource[steps];
-        _map.PlaceEntity(_currentPosition, this);
-
-        if (Speed >= _pathToResource.Count - 1)
+        _map.TryGetEntity(position, out var entity);
+        
+        var herbivore = (Herbivore)entity!;
+        herbivore.Health -= Attack;
+        if (herbivore.Health <= 0)
         {
-            var cell = _map.GetCell(_currentPosition);
-            cell!.Herbivore!.Health -= Attack;
-            if (cell!.Herbivore!.Health <= 0)
-                _map.RemoveEntity(_currentPosition, typeof(Herbivore));
+            Console.WriteLine($"Predator killed the herbivore at {position}");
+            _map.RemoveEntity(position);
+            FindNewPath(position);
+            return true;
         }
-    }
+        else
+        {
+            Console.WriteLine($"Predator at {_currentPosition} attacked the herbivore at {position}," +
+                            $" remaining health: {herbivore.Health}");
+            _stepsInPath--;
+        }
 
-    private bool IsResourceFound(Position position)
-    {
-        var cell = _map.GetCell(position);
-
-        return cell != null && cell.Herbivore != null && cell.Predator == null;
+        return false;
     }
 }

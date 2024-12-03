@@ -2,47 +2,62 @@ using Simulation.Models;
 
 namespace Simulation.Services;
 
-public class ResourceSearcher(Map map)
+public class ResourceSearcher<TResource>(Map map) where TResource : Entity
 {
     private readonly Map _map = map;
 
-    public List<Position> FindResource(Position start, Predicate<Position> resourceFoundCondition, Entity subject)
+    private List<Position> _visitedPositions = [];
+    private Dictionary<Position, Position> _transitions = [];
+    private Queue<Position> _queue = new();
+
+    public List<Position> FindResource(Position start)
     {
-        var visited = new List<Position>();
-        var transitions = new Dictionary<Position, Position>();
+        Reset();
+        _queue.Enqueue(start);
+        _visitedPositions.Add(start);
 
-        var queue = new Queue<Position>();
-        queue.Enqueue(start);
-        visited.Add(start);
-
-        while (queue.Count > 0)
+        while (_queue.Count > 0)
         {
-            var position = queue.Dequeue();
-            if (resourceFoundCondition(position))
-                return ConstructPath(start, position, transitions);
+            var position = _queue.Dequeue();
+            if (_map.CheckForEntityType<TResource>(position))
+                return ConstructPath(start, position);
 
-            foreach (var adjacent in position.Adjacents)
-                if (!visited.Contains(adjacent) && _map.CanBePassedThrough(adjacent, subject))
-                {
-                    visited.Add(adjacent);
-                    transitions[adjacent] = position;
-                    queue.Enqueue(adjacent);
-                }
+            ProcessAdjacentPositions(position);
         }
 
         return [];
-    } 
+    }
 
-    private static List<Position> ConstructPath(
-        Position start, Position finish, Dictionary<Position, Position> transitions)
+    public void Reset()
     {
-        List<Position> path = [finish];
+        _queue = [];
+        _visitedPositions = [];
+        _transitions = [];
+    }
+
+    private void ProcessAdjacentPositions(Position position)
+    {
+        foreach (var adjacent in position.Adjacents)
+        {
+            if (!_visitedPositions.Contains(adjacent) &&
+                (_map.IsPositionFree(adjacent) || _map.CheckForEntityType<TResource>(adjacent)))
+            {
+                _visitedPositions.Add(adjacent);
+                _transitions[adjacent] = position;
+                _queue.Enqueue(adjacent);
+            }
+        }
+    }
+
+    private List<Position> ConstructPath(Position start, Position finish)
+    {
+        List<Position> path = [];
         var position = finish;
 
         while (position != start)
         {
-            position = transitions[position];
             path.Add(position);
+            position = _transitions[position];
         }
         path.Reverse();
 

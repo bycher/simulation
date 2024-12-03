@@ -1,17 +1,12 @@
 namespace Simulation.Models.Actions;
 
-public class ArrangeEntities<T> : Action where T : Entity
+public class ArrangeEntities<T>(
+    Map map, int entitiesNumber, Func<Position, T> entityFactory) : Action(map)
+    where T : Entity
 {
-    private readonly int _entitiesNumber;
-    private readonly Func<Position, T> _entityFactory;
+    private readonly int _entitiesNumber = entitiesNumber;
+    private readonly Func<Position, T> _entityFactory = entityFactory;
     private readonly Random _random = new();
-
-    public ArrangeEntities(
-        Map map, int entitiesNumber, Func<Position, T> entityFactory) : base(map)
-    {
-        _entitiesNumber = entitiesNumber;
-        _entityFactory = entityFactory;
-    }
 
     public override void Execute()
     {

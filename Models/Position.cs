@@ -1,9 +1,9 @@
 namespace Simulation.Models;
 
-public class Position
+public class Position(int x, int y)
 {
-    public int X { get; set; }
-    public int Y { get; set; }
+    public int X { get; set; } = x;
+    public int Y { get; set; } = y;
 
     public List<Position> Adjacents => [
         new Position(X + 1, Y),
@@ -11,12 +11,6 @@ public class Position
         new Position(X - 1, Y),
         new Position(X, Y - 1),
     ];
-
-    public Position(int x, int y)
-    {
-        X = x;
-        Y = y;
-    }
 
     public override bool Equals(object? obj)
     {
@@ -27,4 +21,6 @@ public class Position
     }
 
     public override int GetHashCode() => HashCode.Combine(X, Y);
+
+    public override string ToString() => $"({X}; {Y})"; 
 }
