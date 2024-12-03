@@ -1,3 +1,5 @@
+using Simulation.Models.Entities;
+
 namespace Simulation.Models.Actions;
 
 public class ArrangeEntities<T>(int entitiesNumber, Func<Position, T> entityFactory) : Action
@@ -25,7 +27,7 @@ public class ArrangeEntities<T>(int entitiesNumber, Func<Position, T> entityFact
                                     random.Next(map.M));
         }
         while (!map.IsPositionFree(position));
-        
+
         return position;
     }
 }

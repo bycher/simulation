@@ -1,6 +1,6 @@
 using Simulation.Services;
 
-namespace Simulation.Models;
+namespace Simulation.Models.Entities;
 
 public class Predator(int speed, int health, int attack, Position currentPosition,
                     IResourceSearcher resourceSearcher)

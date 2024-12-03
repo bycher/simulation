@@ -1,4 +1,5 @@
 using Simulation.Models.Actions;
+using Simulation.Models.Entities;
 using Simulation.Services;
 
 namespace Simulation.Models;

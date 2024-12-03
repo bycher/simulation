@@ -1,3 +1,4 @@
+using Simulation.Models.Entities;
 using Simulation.Services;
 
 namespace Simulation.Models;

@@ -1,6 +1,6 @@
 using Simulation.Services;
 
-namespace Simulation.Models;
+namespace Simulation.Models.Entities;
 
 public abstract class Creature(int speed, int health, Position currentPosition) : Entity
 {

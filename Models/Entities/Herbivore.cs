@@ -1,6 +1,6 @@
 using Simulation.Services;
 
-namespace Simulation.Models;
+namespace Simulation.Models.Entities;
 
 public class Herbivore(int speed, int health, Position currentPosition,
                     IResourceSearcher resourceSearcher)
