@@ -12,8 +12,8 @@ public class MoveCreatures(IMapRenderer mapRenderer, ManualResetEvent pauseEvent
         foreach (var creature in map.Creatures)
         {
             _pauseEvent.WaitOne();
-            _mapRenderer.Render(map);
             creature.MakeMove(map);
+            _mapRenderer.Render(map);
             Thread.Sleep(2000);
         }
     }

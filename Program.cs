@@ -23,7 +23,9 @@ internal class Program
         };
 
         var logger = new LoggerConfiguration()
-            .WriteTo.Console()
+            .WriteTo.File(
+                path: $"logs/log_{DateTime.Now:yyyyMMdd_HHmmss}.txt",
+                outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
             .CreateLogger();
 
         var simulation = new Simulation.Models.Simulation(

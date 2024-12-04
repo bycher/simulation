@@ -54,32 +54,28 @@ public class Simulation
 
     public void Start()
     {
-        new Thread(() =>
-        {
-            foreach (var action in _initActions)
-                action.Execute(_map);
+        var inputThread = new Thread(ListenForInput);
+        inputThread.Start();
 
+        foreach (var action in _initActions)
+            action.Execute(_map);
+
+        Console.Clear();
+        _mapRenderer.Render(_map);
+
+        while (true)
+        {
+            NextTurn();
             _mapRenderer.Render(_map);
-
-            while (true)
-            {
-                NextTurn();
-                _mapRenderer.Render(_map);
-                Thread.Sleep(1000);
-            }
-        })
-        {
-            IsBackground = true
+            Thread.Sleep(1000);
         }
-        .Start();
-        ListenForInput();
     }
 
     private void ListenForInput()
     {
-        new Thread(() =>
+        while (true)
         {
-            while (true)
+            if (Console.KeyAvailable)
             {
                 var key = Console.ReadKey(true).Key;
                 if (key == ConsoleKey.Spacebar)
@@ -96,7 +92,7 @@ public class Simulation
                     }
                 }
             }
-        }).Start();
+        }
     }
 
     private void NextTurn()
