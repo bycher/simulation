@@ -20,7 +20,7 @@ public class Simulation
 
     private readonly ManualResetEvent _pauseEvent = new(true);
 
-    public Simulation(SimulationParams options, IMapRenderer mapRenderer, ILogger logger)
+    public Simulation(SimulationOptions options, IMapRenderer mapRenderer, ILogger logger)
     {
         _map = new(options.N, options.M);
         _mapRenderer = mapRenderer;
@@ -77,7 +77,7 @@ public class Simulation
         else
         {
             _logger.Information("Simulation is resumed");
-            _pauseEvent.Set();        
+            _pauseEvent.Set();
         }
     }
 
@@ -95,7 +95,7 @@ public class Simulation
             action.Execute(_map, ref _isCancelled);
         }
         _logger.Information("Initialization is complete");
-        
+
         _mapRenderer.Render(_map);
     }
 

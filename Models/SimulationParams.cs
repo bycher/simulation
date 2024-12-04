@@ -1,6 +1,6 @@
 namespace Simulation.Models;
 
-public class SimulationParams
+public class SimulationOptions
 {
     public int N { get; set; }
     public int M { get; set; }
