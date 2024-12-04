@@ -8,10 +8,12 @@ public class ArrangeEntities<T>(int entitiesNumber, Func<Position, T> entityFact
     private readonly int _entitiesNumber = entitiesNumber;
     private readonly Func<Position, T> _entityFactory = entityFactory;
 
-    public override void Execute(Map map)
+    public override void Execute(Map map, ref bool isCancelled)
     {
         for (int i = 0; i < _entitiesNumber; i++)
         {
+            if (isCancelled)
+                return;
             var position = GetRandomPosition(map);
             map.PlaceEntity(position, _entityFactory(position));
         }

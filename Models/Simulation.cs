@@ -12,6 +12,8 @@ public class Simulation
     private readonly Map _map;
     private readonly IMapRenderer _mapRenderer;
     private readonly ILogger _logger;
+    private int _iterationNum;
+    private bool _isCancelled = false;
 
     private readonly List<Action> _initActions;
     private readonly List<Action> _turnActions;
@@ -20,7 +22,7 @@ public class Simulation
 
     public Simulation(SimulationParams options, IMapRenderer mapRenderer, ILogger logger)
     {
-        _map = new(options.N, options.M, mapRenderer);
+        _map = new(options.N, options.M);
         _mapRenderer = mapRenderer;
         _logger = logger;
 
@@ -54,53 +56,63 @@ public class Simulation
 
     public void Start()
     {
-        var inputThread = new Thread(ListenForInput);
-        inputThread.Start();
+        _logger.Information("Simulation is started");
 
-        foreach (var action in _initActions)
-            action.Execute(_map);
+        Initialize();
 
-        Console.Clear();
-        _mapRenderer.Render(_map);
-
-        while (true)
+        while (!_isCancelled)
         {
-            NextTurn();
-            _mapRenderer.Render(_map);
+            StartNewIteration();
             Thread.Sleep(1000);
         }
     }
 
-    private void ListenForInput()
+    public void TogglePause()
     {
-        while (true)
+        if (_pauseEvent.WaitOne(0))
         {
-            if (Console.KeyAvailable)
-            {
-                var key = Console.ReadKey(true).Key;
-                if (key == ConsoleKey.Spacebar)
-                {
-                    if (_pauseEvent.WaitOne(0))
-                    {
-                        _logger.Information("Simulation is paused...");
-                        _pauseEvent.Reset();
-                    }
-                    else
-                    {
-                        _logger.Information("Simulation is resumed...");
-                        _pauseEvent.Set();
-                    }
-                }
-            }
+            _logger.Information("Simulation is paused");
+            _pauseEvent.Reset();
+        }
+        else
+        {
+            _logger.Information("Simulation is resumed");
+            _pauseEvent.Set();        
         }
     }
 
-    private void NextTurn()
+    public void Stop()
     {
+        _logger.Information("Simulation is stopped");
+        _isCancelled = true;
+    }
+
+    public void Initialize()
+    {
+        _logger.Information("Perform initialization");
+        foreach (var action in _initActions)
+        {
+            action.Execute(_map, ref _isCancelled);
+        }
+        _logger.Information("Initialization is complete");
+        
+        _mapRenderer.Render(_map);
+    }
+
+    private void StartNewIteration()
+    {
+        _iterationNum++;
+
+        _logger.Information($"Starting iteration #{_iterationNum}");
         foreach (var action in _turnActions)
         {
             _pauseEvent.WaitOne();
-            action.Execute(_map);
+            action.Execute(_map, ref _isCancelled);
+            if (_isCancelled)
+                return;
         }
+        _logger.Information($"Iteration #{_iterationNum} is complete");
+
+        _mapRenderer.Render(_map);
     }
 }

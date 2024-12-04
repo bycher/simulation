@@ -9,10 +9,7 @@ public class ConsoleMapRenderer : IMapRenderer
     
     public void Render(Map map)
     {
-        var (origLeft, origTop) = (Console.CursorLeft, Console.CursorTop);
-        if (origTop == 0)
-            origTop = 2 * map.N + 1;
-        Console.SetCursorPosition(0, 0);
+        Console.Clear();
 
         PrintBorder(map.M);
         for (int x = 0; x < map.N; x++)
@@ -27,16 +24,12 @@ public class ConsoleMapRenderer : IMapRenderer
             Console.WriteLine("|");
             PrintBorder(map.M);
         }
-
-        Console.SetCursorPosition(origLeft, origTop);
     }
 
     private static void PrintBorder(int columns)
     {
         for (int i = 0; i < columns; i++)
-        {
             Console.Write("+".PadRight(CellWidth + 3, '-'));
-        }
         Console.WriteLine("+");
     }
 }
