@@ -1,5 +1,4 @@
 using Simulation.Models;
-using Simulation.Models.Entities;
 using Simulation.Services.Interfaces;
 
 namespace Simulation.Services;
@@ -17,9 +16,10 @@ public class ConsoleMapRenderer : IMapRenderer
         {
             for (int y = 0; y < map.M; y++)
             {
-                map.TryGetEntity(x, y, out var entity);
-                var image = GetEntityImage(entity);
-                Console.Write("| " + image.PadLeft((CellWidth + image.Length) / 2).PadRight(CellWidth));;
+                var image = map.TryGetEntity(x, y, out var entity)
+                    ? entity!.ToString()!
+                    : " ";
+                Console.Write($"| {image.PadLeft((CellWidth + image.Length) / 2), -CellWidth} ");
             }
             Console.WriteLine("|");
             PrintBorder(map.M);
@@ -30,19 +30,8 @@ public class ConsoleMapRenderer : IMapRenderer
     {
         for (int i = 0; i < columns; i++)
         {
-            Console.Write("+".PadRight(CellWidth + 2, '-'));
+            Console.Write("+".PadRight(CellWidth + 3, '-'));
         }
         Console.WriteLine("+");
     }
-
-    private static string GetEntityImage(Entity? entity) => entity switch
-    {
-        null => ".",
-        Rock => "#",
-        Tree => "*",
-        Grass => "^",
-        Herbivore => "H",
-        Predator => "P",
-        _ => throw new ArgumentException("Unknown entity")
-    };
 }

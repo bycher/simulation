@@ -30,4 +30,6 @@ public class Predator(int speed, int health, int attack, Position currentPositio
 
         return herbivore.Health <= 0;
     }
+
+    public override string ToString() => "\U0001F981";
 }

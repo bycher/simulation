@@ -14,4 +14,6 @@ public class Herbivore(int speed, int health, Position currentPosition,
         FindNewPath(position);
         return true;
     }
+
+    public override string ToString() => "\U0001F42E";
 }
