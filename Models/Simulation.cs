@@ -29,20 +29,11 @@ public class Simulation
         _logger = logger;
 
         _initActions = [
-            new ArrangeEntities<Rock>(
-                options.RockOptions.Number, _ => new Rock(options.RockOptions)),
-            new ArrangeEntities<Tree>(
-                options.TreeOptions.Number, _ => new Tree(options.TreeOptions)),
-            new ArrangeEntities<Grass>(
-                options.GrassOptions.Number, _ => new Grass(options.GrassOptions)),
-            new ArrangeEntities<Herbivore>(
-                options.HerbivoreOptions.Number,
-                position => new Herbivore(
-                    options.HerbivoreOptions, position, new ResourceSearcher<Grass>(_map), logger)),
-            new ArrangeEntities<Predator>(
-                options.PredatorOptions.Number,
-                position => new Predator(
-                    options.PredatorOptions, position, new ResourceSearcher<Herbivore>(_map), logger)),
+            new ArrangeRocks(options.RockOptions),
+            new ArrangeTrees(options.TreeOptions),
+            new ArrangeGrass(options.GrassOptions),
+            new ArrangeHerbivores(options.HerbivoreOptions, _map, logger),
+            new ArrangePredators(options.PredatorOptions, _map, logger),
         ];
 
         _turnActions = [

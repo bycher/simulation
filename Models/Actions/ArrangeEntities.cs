@@ -1,37 +1,36 @@
 using Simulation.Models.Entities;
+using Simulation.Models.Options;
 
 namespace Simulation.Models.Actions;
 
-public class ArrangeEntities<T>(int entitiesNumber, Func<Position, T> entityFactory) : Action
-    where T : Entity
+public abstract class ArrangeEntities(EntityOptions options) : Action
 {
-    private readonly int _entitiesNumber = entitiesNumber;
-    private readonly Func<Position, T> _entityFactory = entityFactory;
+    protected readonly EntityOptions _options = options;
+    protected Position _position = null!;
+    
+    public abstract Entity CreateEntity();
 
     public override void Execute(Map map, ref bool isCancelled)
     {
-        for (int i = 0; i < _entitiesNumber; i++)
+        for (int i = 0; i < _options.Number; i++)
         {
             if (isCancelled)
             {
                 return;
             }
-            var position = GetRandomPosition(map);
-            map.PlaceEntity(position, _entityFactory(position));
+            GenerateRandomPosition(map);
+            map.PlaceEntity(_position, CreateEntity());
         }
     }
 
-    private static Position GetRandomPosition(Map map)
+    private void GenerateRandomPosition(Map map)
     {
-        Position position;
         do
         {
             var random = new Random();
-            position = new Position(random.Next(map.Rows),
+            _position = new Position(random.Next(map.Rows),
                                     random.Next(map.Columns));
         }
-        while (!map.IsPositionFree(position));
-
-        return position;
+        while (!map.IsPositionFree(_position));
     }
 }
