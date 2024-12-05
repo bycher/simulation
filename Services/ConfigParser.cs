@@ -8,10 +8,6 @@ namespace Simulation.Services;
 
 public class ConfigParser(string fileName, ILogger logger) : IConfigParser
 {
-    private static readonly HashSet<string> ValidPropertyNames = new(typeof(SimulationOptions)
-        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-        .Select(p => p.Name));
-
     private readonly string _path = Path.Combine("config", fileName);
     private readonly ILogger _logger = logger;
 
@@ -42,11 +38,12 @@ public class ConfigParser(string fileName, ILogger logger) : IConfigParser
 
     private static bool ValidateJson(string json)
     {
+        var validPropertyNames = typeof(SimulationOptions).GetProperties().Select(p => p.Name);
+        
         var document = JsonDocument.Parse(json);
-
         foreach (var property in document.RootElement.EnumerateObject())
         {
-            if (!ValidPropertyNames.Contains(property.Name))
+            if (!validPropertyNames.Contains(property.Name))
                 throw new JsonException($"Unknown property: \"{property.Name}\"");
         } 
         return true;
