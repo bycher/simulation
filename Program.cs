@@ -1,8 +1,7 @@
-﻿using System.Text.Json;
-using Serilog;
+﻿using Serilog;
 using Serilog.Events;
-using Simulation.Models;
 using Simulation.Services;
+using Simulation.Utility;
 
 #pragma warning disable CS8604
 
@@ -27,24 +26,11 @@ internal class Program
         {
             var simulation = new Simulation.Models.Simulation(
                 simulationOptions, new ConsoleMapRenderer(), logger);
+            
+            var inputListener = new InputListener(simulation);
+            inputListener.Listen(); // starts as background thread
 
             simulation.Start();
-            HandleUserInput(simulation);
         }
-    }
-
-    private static void HandleUserInput(Simulation.Models.Simulation simulation)
-    {
-        ConsoleKey key;
-        do
-        {
-            key = Console.ReadKey(true).Key;
-
-            if (key == ConsoleKey.Spacebar)
-                simulation.TogglePause();
-        }
-        while (key != ConsoleKey.Escape);
-
-        simulation.Stop();
     }
 }

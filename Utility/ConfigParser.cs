@@ -1,12 +1,10 @@
-using System.Reflection;
 using System.Text.Json;
 using Serilog;
 using Simulation.Models;
-using Simulation.Services.Interfaces;
 
-namespace Simulation.Services;
+namespace Simulation.Utility;
 
-public class ConfigParser(string fileName, ILogger logger) : IConfigParser
+public class ConfigParser(string fileName, ILogger logger)
 {
     private readonly string _path = Path.Combine("config", fileName);
     private readonly ILogger _logger = logger;
@@ -39,7 +37,7 @@ public class ConfigParser(string fileName, ILogger logger) : IConfigParser
     private static bool ValidateJson(string json)
     {
         var validPropertyNames = typeof(SimulationOptions).GetProperties().Select(p => p.Name);
-        
+
         var document = JsonDocument.Parse(json);
         foreach (var property in document.RootElement.EnumerateObject())
         {
