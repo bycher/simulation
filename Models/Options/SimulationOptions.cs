@@ -1,6 +1,4 @@
-using Simulation.Models.Options;
-
-namespace Simulation.Models;
+namespace Simulation.Models.Options;
 
 #pragma warning disable CS8618
 

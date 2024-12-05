@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Serilog;
-using Simulation.Models;
+using Simulation.Models.Options;
 
 namespace Simulation.Utility;
 

@@ -1,6 +1,7 @@
 using Serilog;
 using Simulation.Models.Actions;
 using Simulation.Models.Entities;
+using Simulation.Models.Options;
 using Simulation.Services;
 using Simulation.Services.Interfaces;
 using Action = Simulation.Models.Actions.Action;
