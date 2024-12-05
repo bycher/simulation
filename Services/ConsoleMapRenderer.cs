@@ -6,23 +6,23 @@ namespace Simulation.Services;
 public class ConsoleMapRenderer : IMapRenderer
 {
     private const int CellWidth = 2;
-    
+
     public void Render(Map map)
     {
         Console.Clear();
 
-        PrintBorder(map.M);
-        for (int x = 0; x < map.N; x++)
+        PrintBorder(map.Columns);
+        for (int x = 0; x < map.Rows; x++)
         {
-            for (int y = 0; y < map.M; y++)
+            for (int y = 0; y < map.Columns; y++)
             {
                 var image = map.TryGetEntity(x, y, out var entity)
-                    ? entity!.ToString()!
+                    ? entity!.Image
                     : " ";
-                Console.Write($"| {image.PadLeft((CellWidth + image.Length) / 2), -CellWidth} ");
+                Console.Write($"| {image.PadLeft((CellWidth + image.Length) / 2),-CellWidth} ");
             }
             Console.WriteLine("|");
-            PrintBorder(map.M);
+            PrintBorder(map.Columns);
         }
     }
 

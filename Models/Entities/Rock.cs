@@ -1,6 +1,7 @@
+using Simulation.Models.Options;
+
 namespace Simulation.Models.Entities;
 
-public class Rock : Entity
+public class Rock(EntityOptions options) : Entity(options)
 {
-    public override string ToString() => "\U000026F0";
 }

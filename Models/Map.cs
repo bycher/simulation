@@ -2,23 +2,15 @@ using Simulation.Models.Entities;
 
 namespace Simulation.Models;
 
-public class Map
+public class Map(int rows, int columns)
 {
-    public int N { get; set; }
-    public int M { get; set; }
+    public int Rows { get; set; } = rows;
+    public int Columns { get; set; } = columns;
 
-    public List<Creature> Creatures => _entities.Values
-                                                .Where(e => e is Creature)
-                                                .Cast<Creature>().ToList();
+    public List<Creature> Creatures => _entities.Values.Where(e => e is Creature)
+                                                       .Cast<Creature>().ToList();
 
     private readonly Dictionary<Position, Entity> _entities = [];
-
-    public Map(int n, int m)
-    {
-        N = n;
-        M = m;
-        AddPaddings();
-    }
 
     public bool IsPositionFree(Position position)
     {
@@ -49,20 +41,5 @@ public class Map
     {
         TryGetEntity(position, out var entity);
         return entity is T;
-    }
-
-    private void AddPaddings()
-    {
-        for (int i = 0; i < N; i++)
-        {
-            PlaceEntity(new Position(i, -1), new Rock());
-            PlaceEntity(new Position(i, M), new Rock());
-        }
-
-        for (int i = 0; i < M; i++)
-        {
-            PlaceEntity(new Position(-1, i), new Rock());
-            PlaceEntity(new Position(N, i), new Rock());
-        }
     }
 }

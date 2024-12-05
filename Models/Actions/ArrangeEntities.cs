@@ -13,7 +13,9 @@ public class ArrangeEntities<T>(int entitiesNumber, Func<Position, T> entityFact
         for (int i = 0; i < _entitiesNumber; i++)
         {
             if (isCancelled)
+            {
                 return;
+            }
             var position = GetRandomPosition(map);
             map.PlaceEntity(position, _entityFactory(position));
         }
@@ -25,8 +27,8 @@ public class ArrangeEntities<T>(int entitiesNumber, Func<Position, T> entityFact
         do
         {
             var random = new Random();
-            position = new Position(random.Next(map.N),
-                                    random.Next(map.M));
+            position = new Position(random.Next(map.Rows),
+                                    random.Next(map.Columns));
         }
         while (!map.IsPositionFree(position));
 

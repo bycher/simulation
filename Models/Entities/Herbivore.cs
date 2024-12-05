@@ -1,11 +1,12 @@
 using Serilog;
+using Simulation.Models.Options;
 using Simulation.Services;
 
 namespace Simulation.Models.Entities;
 
-public class Herbivore(int speed, int health, Position currentPosition,
-                    IResourceSearcher resourceSearcher, ILogger logger)
-    : Creature<Grass>(speed, health, currentPosition, resourceSearcher, logger)
+public class Herbivore(CreatureOptions options, Position currentPosition,
+                       IResourceSearcher resourceSearcher, ILogger logger)
+    : Creature<Grass>(options, currentPosition, resourceSearcher, logger)
 {
     protected override bool TryConsumeResource(Map map, Position position)
     {
@@ -14,6 +15,4 @@ public class Herbivore(int speed, int health, Position currentPosition,
         FindNewPath(position);
         return true;
     }
-
-    public override string ToString() => "\U0001F42E";
 }

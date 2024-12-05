@@ -1,23 +1,24 @@
 using Serilog;
+using Simulation.Models.Options;
 using Simulation.Services;
 
 namespace Simulation.Models.Entities;
 
-public abstract class Creature(int speed, int health, Position currentPosition) : Entity
+public abstract class Creature(CreatureOptions options, Position currentPosition) : Entity(options)
 {
     protected Position _currentPosition = currentPosition;
     protected List<Position> _path = [];
     protected int _stepsInPath;
 
-    public int Speed { get; set; } = speed;
-    public int Health { get; set; } = health;
+    public int Speed { get; set; } = options.Speed;
+    public int Health { get; set; } = options.Health;
 
     public abstract void MakeMove(Map map);
 }
 
-public abstract class Creature<TResource>(int speed, int health, Position currentPosition,
+public abstract class Creature<TResource>(CreatureOptions options, Position currentPosition,
                                           IResourceSearcher resourceSearcher, ILogger logger)
-    : Creature(speed, health, currentPosition) where TResource : Entity
+    : Creature(options, currentPosition) where TResource : Entity
 {
     protected readonly ILogger _logger = logger;
     protected readonly IResourceSearcher _resourceSearcher = resourceSearcher;
@@ -33,21 +34,24 @@ public abstract class Creature<TResource>(int speed, int health, Position curren
             var nextPosition = _path[_stepsInPath++];
             if (_stepsInPath == _path.Count)
             {
-                var resourceConsumed = TryConsumeResource(map, nextPosition);
-                if (resourceConsumed)
+                if (TryConsumeResource(map, nextPosition))
+                {
                     ChangePosition(map, nextPosition);
+                }
             }
             else
+            {
                 ChangePosition(map, nextPosition);
+            }
         }
     }
 
-    public void ChangePosition(Map map, Position newPosition)
+    private void ChangePosition(Map map, Position newPosition)
     {
         map.RemoveEntity(_currentPosition);
         map.PlaceEntity(newPosition, this);
+
         _logger.Information($"{GetType().Name} made step from {_currentPosition} to {newPosition}");
-        
         _currentPosition = newPosition;
     }
 

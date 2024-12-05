@@ -12,15 +12,27 @@ public class Position(int x, int y)
         new Position(X, Y - 1),
     ];
 
+    public bool IsInsideMap(Map map)
+    {
+        return X >= 0 && X < map.Rows && Y >= 0 && Y < map.Columns;
+    }
+
     public override bool Equals(object? obj)
     {
         if (obj is Position position)
+        {
             return position.X == X && position.Y == Y;
-
+        }
         return base.Equals(obj);
     }
 
-    public override int GetHashCode() => HashCode.Combine(X, Y);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(X, Y);
+    }
 
-    public override string ToString() => $"({X}; {Y})"; 
+    public override string ToString()
+    {
+        return $"({X}; {Y})";
+    }
 }

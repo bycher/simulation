@@ -6,6 +6,11 @@ namespace Simulation.Utility;
 
 public class ConfigParser(string fileName, ILogger logger)
 {
+    private readonly JsonSerializerOptions _serializerOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    };
+
     private readonly string _path = Path.Combine("config", fileName);
     private readonly ILogger _logger = logger;
 
@@ -17,12 +22,12 @@ public class ConfigParser(string fileName, ILogger logger)
             _logger.Error("Config file doesn't exist!");
             return false;
         }
-        
+
         try
         {
             var json = File.ReadAllText(_path);
             ValidateJson(json);
-            simulationOptions = JsonSerializer.Deserialize<SimulationOptions>(json);
+            simulationOptions = ParseJson(json);
         }
         catch (Exception e)
         {
@@ -34,16 +39,23 @@ public class ConfigParser(string fileName, ILogger logger)
         return true;
     }
 
+    private SimulationOptions? ParseJson(string json)
+    {
+        return JsonSerializer.Deserialize<SimulationOptions>(json, _serializerOptions);
+    }
+
     private static bool ValidateJson(string json)
     {
-        var validPropertyNames = typeof(SimulationOptions).GetProperties().Select(p => p.Name);
+        var validPropertyNames = typeof(SimulationOptions).GetProperties().Select(p => JsonNamingPolicy.CamelCase.ConvertName(p.Name));
 
         var document = JsonDocument.Parse(json);
         foreach (var property in document.RootElement.EnumerateObject())
         {
             if (!validPropertyNames.Contains(property.Name))
+            {
                 throw new JsonException($"Unknown property: \"{property.Name}\"");
-        } 
+            }
+        }
         return true;
     }
 }

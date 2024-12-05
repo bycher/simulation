@@ -10,43 +10,38 @@ namespace Simulation.Models;
 public class Simulation
 {
     private readonly Map _map;
-    private readonly IMapRenderer _mapRenderer;
-    private readonly ILogger _logger;
     private int _iterationNum;
-    private bool _isCancelled = false;
+    private bool _isCancelled;
 
     private readonly List<Action> _initActions;
     private readonly List<Action> _turnActions;
+
+    private readonly IMapRenderer _mapRenderer;
+    private readonly ILogger _logger;
 
     private readonly ManualResetEvent _pauseEvent = new(true);
 
     public Simulation(SimulationOptions options, IMapRenderer mapRenderer, ILogger logger)
     {
-        _map = new(options.N, options.M);
+        _map = new(options.Rows, options.Columns);
         _mapRenderer = mapRenderer;
         _logger = logger;
 
         _initActions = [
-            new ArrangeEntities<Rock>(options.RocksNumber, _ => new Rock()),
-            new ArrangeEntities<Tree>(options.TreeNumber, _ => new Tree()),
-            new ArrangeEntities<Grass>(options.GrassNumber, _ => new Grass()),
+            new ArrangeEntities<Rock>(
+                options.RockOptions.Number, _ => new Rock(options.RockOptions)),
+            new ArrangeEntities<Tree>(
+                options.TreeOptions.Number, _ => new Tree(options.TreeOptions)),
+            new ArrangeEntities<Grass>(
+                options.GrassOptions.Number, _ => new Grass(options.GrassOptions)),
             new ArrangeEntities<Herbivore>(
-                options.HerbivoreNumber,
+                options.HerbivoreOptions.Number,
                 position => new Herbivore(
-                    options.HerbivoreSpeed,
-                    options.HerbivoreHealth,
-                    position,
-                    new ResourceSearcher<Grass>(_map),
-                    logger)),
+                    options.HerbivoreOptions, position, new ResourceSearcher<Grass>(_map), logger)),
             new ArrangeEntities<Predator>(
-                options.PredatorNumber,
+                options.PredatorOptions.Number,
                 position => new Predator(
-                    options.PredatorSpeed,
-                    options.PredatorHealth,
-                    options.PredatorAttack,
-                    position,
-                    new ResourceSearcher<Herbivore>(_map),
-                    logger)),
+                    options.PredatorOptions, position, new ResourceSearcher<Herbivore>(_map), logger)),
         ];
 
         _turnActions = [
@@ -107,7 +102,9 @@ public class Simulation
             _pauseEvent.WaitOne();
             action.Execute(_map, ref _isCancelled);
             if (_isCancelled)
+            {
                 return;
+            }
         }
         _logger.Information($"Iteration #{_iterationNum} is complete");
 

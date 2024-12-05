@@ -21,11 +21,12 @@ public class ResourceSearcher<TResource>(Map map) : IResourceSearcher where TRes
         {
             var position = _queue.Dequeue();
             if (_map.CheckForEntityType<TResource>(position))
+            {
                 return ConstructPath(start, position);
-
+            }
             ProcessAdjacentPositions(position);
         }
-
+        
         return [];
     }
 
@@ -40,7 +41,7 @@ public class ResourceSearcher<TResource>(Map map) : IResourceSearcher where TRes
     {
         foreach (var adjacent in position.Adjacents)
         {
-            if (!_visitedPositions.Contains(adjacent) &&
+            if (position.IsInsideMap(_map) && !_visitedPositions.Contains(adjacent) &&
                 (_map.IsPositionFree(adjacent) || _map.CheckForEntityType<TResource>(adjacent)))
             {
                 _visitedPositions.Add(adjacent);

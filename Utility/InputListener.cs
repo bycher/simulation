@@ -12,9 +12,11 @@ public class InputListener(Models.Simulation simulation)
             do
             {
                 key = Console.ReadKey(true).Key;
-                
+
                 if (key == ConsoleKey.Spacebar)
+                {
                     _simulation.TogglePause();
+                }
             }
             while (key != ConsoleKey.Escape);
 

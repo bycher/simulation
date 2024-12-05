@@ -1,6 +1,7 @@
+using Simulation.Models.Options;
+
 namespace Simulation.Models.Entities;
 
-public class Grass : Entity
+public class Grass(EntityOptions options) : Entity(options)
 {
-    public override string ToString() => "\U0001F331";
 }
