@@ -1,18 +1,14 @@
 namespace Simulation.Models.Options;
 
-#pragma warning disable CS8618
-
 public class SimulationOptions
 {
-    public int Rows { get; set; }
-    public int Columns { get; set; }
+    public int Rows { get; init; }
+    public int Columns { get; init; }
 
-    public EntityOptions RockOptions { get; set; }
-    public EntityOptions TreeOptions { get; set; }
-    public EntityOptions GrassOptions { get; set; }
+    public required EntityOptions RockOptions { get; init; }
+    public required EntityOptions TreeOptions { get; init; }
+    public required EntityOptions GrassOptions { get; init; }
 
-    public CreatureOptions HerbivoreOptions { get; set; }
-    public PredatorOptions PredatorOptions { get; set; }
+    public required CreatureOptions HerbivoreOptions { get; init; }
+    public required PredatorOptions PredatorOptions { get; init; }
 }
-
-#pragma warning restore CS8618

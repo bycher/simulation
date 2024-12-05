@@ -1,11 +1,7 @@
 namespace Simulation.Models.Options;
 
-#pragma warning disable CS8618
-
 public class EntityOptions
 {
-    public int Number { get; set; }
-    public string Image { get; set; }
+    public int Number { get; init; }
+    public required string Image { get; init; }
 }
-
-#pragma warning restore CS8618

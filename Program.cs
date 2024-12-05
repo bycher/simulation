@@ -34,3 +34,5 @@ internal class Program
         }
     }
 }
+
+#pragma warning restore CS8604
