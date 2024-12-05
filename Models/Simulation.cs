@@ -19,6 +19,7 @@ public class Simulation
     private readonly List<Action> _turnActions;
 
     private readonly ManualResetEvent _pauseEvent = new(true);
+    private readonly Thread _simulationThread;
 
     public Simulation(SimulationOptions options, IMapRenderer mapRenderer, ILogger logger)
     {
@@ -52,9 +53,16 @@ public class Simulation
         _turnActions = [
             new MoveCreatures(_mapRenderer, _pauseEvent),
         ];
+
+        _simulationThread = new(Simulate)
+        {
+            IsBackground = true
+        };
     }
 
-    public void Start()
+    public void Start() => _simulationThread.Start();
+    
+    private void Simulate()
     {
         _logger.Information("Simulation is started");
 
