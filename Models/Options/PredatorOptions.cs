@@ -1,6 +1,6 @@
 namespace Simulation.Models.Options;
 
-public class PredatorOptions : CreatureOptions
+public record PredatorOptions : CreatureOptions
 {
     public int Attack { get; init; }
 }

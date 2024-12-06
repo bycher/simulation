@@ -3,26 +3,26 @@
     "columns": 10,
 
     "rockOptions": {
-        "number": 3,
+        "number": 5,
         "image": "🗿"
     },
     "treeOptions": {
-        "number": 3,
+        "number": 5,
         "image": "🌳"
     },
     "grassOptions": {
-        "number": 3,
+        "number": 10,
         "image": "🌱"
     },
     "herbivoreOptions": {
-        "number": 3,
-        "speed": 1,
-        "health": 4,
+        "number": 8,
+        "speed": 3,
+        "health": 6,
         "image": "🐮"
     },
     "predatorOptions": {
-        "number": 3,
-        "speed": 2,
+        "number": 4,
+        "speed": 5,
         "health": 1,
         "attack": 2,
         "image": "🦁"

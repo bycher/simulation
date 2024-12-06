@@ -7,8 +7,12 @@ public class Map(int rows, int columns)
     public int Rows { get; set; } = rows;
     public int Columns { get; set; } = columns;
 
-    public List<Creature> Creatures => _entities.Values.Where(e => e is Creature)
-                                                       .Cast<Creature>().ToList();
+    public List<Creature> Creatures => GetEntities<Creature>();
+
+    public List<T> GetEntities<T>()
+    {
+        return _entities.Values.Where(e => e is T).Cast<T>().ToList();
+    }
 
     private readonly Dictionary<Position, Entity> _entities = [];
 

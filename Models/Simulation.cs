@@ -26,16 +26,8 @@ public class Simulation
         _mapRenderer = mapRenderer;
         _logger = logger;
 
-        _initActions = [
-            new ArrangeRocks(options.RockOptions),
-            new ArrangeTrees(options.TreeOptions),
-            new ArrangeGrass(options.GrassOptions),
-            new ArrangeHerbivores(options.HerbivoreOptions, _map, logger),
-            new ArrangePredators(options.PredatorOptions, _map, logger),
-        ];
-        _turnActions = [
-            new MoveCreatures(_mapRenderer, _pauseEvent),
-        ];
+        _initActions = ConfigureInitActions(options);
+        _turnActions = ConfigureTurnActions(options);
     }
 
     public void Start()
@@ -69,17 +61,33 @@ public class Simulation
         _isCancelled = true;
     }
 
-    public void Initialize()
+    private void Initialize()
     {
         _logger.Information("Perform initialization");
 
         foreach (var action in _initActions)
             action.Execute(_map, ref _isCancelled);
-            
+
         _logger.Information("Initialization is complete");
 
         _mapRenderer.Render(_map);
     }
+
+    private List<Action> ConfigureInitActions(SimulationOptions options) =>
+    [
+        new ArrangeRocks(options.RockOptions),
+        new ArrangeTrees(options.TreeOptions),
+        new ArrangeGrass(options.GrassOptions),
+        new ArrangeHerbivores(options.HerbivoreOptions, _map, _logger),
+        new ArrangePredators(options.PredatorOptions, _map, _logger),
+    ];
+
+    private List<Action> ConfigureTurnActions(SimulationOptions options) =>
+    [
+        new MoveCreatures(_mapRenderer, _pauseEvent),
+        new GenerateLackingGrass(options.GrassOptions),
+        new GenerateLackingHerbivores(options.HerbivoreOptions, _logger),
+    ];
 
     private void StartNewIteration()
     {
