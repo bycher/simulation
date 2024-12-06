@@ -5,8 +5,7 @@ using Simulation.Services;
 
 namespace Simulation.Models.Actions;
 
-public class ArrangePredators(PredatorOptions options, Map map, ILogger logger)
-    : ArrangeEntities(options)
+public class ArrangePredators(PredatorOptions options, Map map, ILogger logger) : ArrangeEntities(options)
 {
     private readonly Map _map = map;
     private readonly ILogger _logger = logger;

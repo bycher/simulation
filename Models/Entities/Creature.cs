@@ -1,6 +1,6 @@
 using Serilog;
 using Simulation.Models.Options;
-using Simulation.Services;
+using Simulation.Services.Interfaces;
 
 namespace Simulation.Models.Entities;
 
@@ -35,14 +35,10 @@ public abstract class Creature<TResource>(CreatureOptions options, Position curr
             if (_stepsInPath == _path.Count)
             {
                 if (TryConsumeResource(map, nextPosition))
-                {
                     ChangePosition(map, nextPosition);
-                }
             }
             else
-            {
                 ChangePosition(map, nextPosition);
-            }
         }
     }
 

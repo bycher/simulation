@@ -20,9 +20,8 @@ public class Position(int x, int y)
     public override bool Equals(object? obj)
     {
         if (obj is Position position)
-        {
             return position.X == X && position.Y == Y;
-        }
+            
         return base.Equals(obj);
     }
 

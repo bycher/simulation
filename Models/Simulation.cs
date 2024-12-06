@@ -72,10 +72,10 @@ public class Simulation
     public void Initialize()
     {
         _logger.Information("Perform initialization");
+
         foreach (var action in _initActions)
-        {
             action.Execute(_map, ref _isCancelled);
-        }
+            
         _logger.Information("Initialization is complete");
 
         _mapRenderer.Render(_map);
@@ -91,9 +91,7 @@ public class Simulation
             _pauseEvent.WaitOne();
             action.Execute(_map, ref _isCancelled);
             if (_isCancelled)
-            {
                 return;
-            }
         }
         _logger.Information($"Iteration #{_iterationNum} is complete");
 

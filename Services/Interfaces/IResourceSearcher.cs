@@ -1,6 +1,6 @@
 using Simulation.Models;
 
-namespace Simulation.Services;
+namespace Simulation.Services.Interfaces;
 
 public interface IResourceSearcher
 {

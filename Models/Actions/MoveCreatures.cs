@@ -13,9 +13,8 @@ public class MoveCreatures(IMapRenderer mapRenderer, ManualResetEvent pauseEvent
         {
             _pauseEvent.WaitOne();
             if (isCancelled)
-            {
                 return;
-            }
+                
             creature.MakeMove(map);
             _mapRenderer.Render(map);
             Thread.Sleep(2000);

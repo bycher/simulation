@@ -1,5 +1,6 @@
 using Simulation.Models;
 using Simulation.Models.Entities;
+using Simulation.Services.Interfaces;
 
 namespace Simulation.Services;
 
@@ -21,12 +22,11 @@ public class ResourceSearcher<TResource>(Map map) : IResourceSearcher where TRes
         {
             var position = _queue.Dequeue();
             if (_map.CheckForEntityType<TResource>(position))
-            {
                 return ConstructPath(start, position);
-            }
+                
             ProcessAdjacentPositions(position);
         }
-        
+
         return [];
     }
 
