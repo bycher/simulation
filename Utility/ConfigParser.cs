@@ -4,15 +4,21 @@ using Simulation.Models.Options;
 
 namespace Simulation.Utility;
 
-public class ConfigParser(string fileName, ILogger logger)
+public class ConfigParser
 {
     private readonly JsonSerializerOptions _serializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
 
-    private readonly string _path = Path.Combine("config", fileName);
-    private readonly ILogger _logger = logger;
+    private readonly string _path;
+    private readonly ILogger _logger;
+
+    public ConfigParser(string fileName, ILogger logger)
+    {
+        _path = Path.Combine("config", fileName);
+        _logger = logger;
+    }
 
     public bool TryParse(out SimulationOptions? simulationOptions)
     {

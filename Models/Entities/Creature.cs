@@ -4,13 +4,20 @@ using Simulation.Services.Interfaces;
 
 namespace Simulation.Models.Entities;
 
-public abstract class Creature(CreatureOptions options, Position currentPosition) : Entity(options)
+public abstract class Creature : Entity
 {
-    protected Position _currentPosition = currentPosition;
+    public int Speed { get; set; }
+    public int Health { get; set; }
+    
+    protected Position _currentPosition;
     protected Queue<Position> _path = [];
 
-    public int Speed { get; set; } = options.Speed;
-    public int Health { get; set; } = options.Health;
+    public Creature(CreatureOptions options, Position currentPosition) : base(options)
+    {
+        _currentPosition = currentPosition;
+        Speed = options.Speed;
+        Health = options.Health;
+    }
 
     public abstract void MakeMove(Map map);
 }

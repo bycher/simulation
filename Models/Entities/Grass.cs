@@ -2,6 +2,9 @@ using Simulation.Models.Options;
 
 namespace Simulation.Models.Entities;
 
-public class Grass(EntityOptions options) : Entity(options)
+public class Grass : Entity
 {
+    public Grass(EntityOptions options) : base(options)
+    {
+    }
 }

@@ -1,9 +1,9 @@
 namespace Simulation.Models;
 
-public class Position(int x, int y)
+public class Position
 {
-    public int X { get; set; } = x;
-    public int Y { get; set; } = y;
+    public int X { get; set; }
+    public int Y { get; set; }
 
     public List<Position> Adjacents => [
         new Position(X + 1, Y),
@@ -11,6 +11,12 @@ public class Position(int x, int y)
         new Position(X - 1, Y),
         new Position(X, Y - 1),
     ];
+
+    public Position(int x, int y)
+    {
+        X = x;
+        Y = y;
+    }
 
     public bool IsInsideMap(Map map)
     {

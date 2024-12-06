@@ -4,11 +4,19 @@ using Simulation.Services.Interfaces;
 
 namespace Simulation.Models.Entities;
 
-public class Predator(PredatorOptions options, Position currentPosition,
-                      IResourceSearcher resourceSearcher, ILogger logger)
-    : Creature<Herbivore>(options, currentPosition, resourceSearcher, logger)
+public class Predator : Creature<Herbivore>
 {
-    public int Attack { get; set; } = options.Attack;
+    public int Attack { get; set; }
+
+    public Predator(
+        PredatorOptions options,
+        Position currentPosition,
+        IResourceSearcher resourceSearcher,
+        ILogger logger
+    ) : base(options, currentPosition, resourceSearcher, logger)
+    {
+        Attack = options.Attack;
+    }
 
     protected override bool TryConsumeResource(Map map, Position position)
     {
@@ -26,7 +34,8 @@ public class Predator(PredatorOptions options, Position currentPosition,
 
         _logger.Information(
             $"Predator at {_currentPosition} attacked the herbivore at {position} " +
-            $"(remaining health: {herbivore.Health})");
+            $"(remaining health: {herbivore.Health})"
+        );
         return false;
     }
 }

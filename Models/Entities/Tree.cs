@@ -2,6 +2,9 @@ using Simulation.Models.Options;
 
 namespace Simulation.Models.Entities;
 
-public class Tree(EntityOptions options) : Entity(options)
+public class Tree : Entity
 {
+    public Tree(EntityOptions options) : base(options)
+    {
+    }
 }

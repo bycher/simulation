@@ -2,6 +2,9 @@ using Simulation.Models.Options;
 
 namespace Simulation.Models.Entities;
 
-public class Rock(EntityOptions options) : Entity(options)
+public class Rock : Entity
 {
+    public Rock(EntityOptions options) : base(options)
+    {
+    }
 }

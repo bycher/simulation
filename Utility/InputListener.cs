@@ -1,8 +1,13 @@
  namespace Simulation.Utility;
 
-public class InputListener(Models.Simulation simulation)
+public class InputListener
 {
-    private readonly Models.Simulation _simulation = simulation;
+    private readonly Models.Simulation _simulation;
+
+    public InputListener(Models.Simulation simulation)
+    {
+        _simulation = simulation;
+    }
 
     public void Listen()
     {

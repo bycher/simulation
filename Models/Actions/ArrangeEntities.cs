@@ -3,10 +3,15 @@ using Simulation.Models.Options;
 
 namespace Simulation.Models.Actions;
 
-public abstract class ArrangeEntities(EntityOptions options) : Action
+public abstract class ArrangeEntities : Action
 {
-    protected readonly EntityOptions _options = options;
+    protected readonly EntityOptions _options;
     protected Position _position = null!;
+
+    public ArrangeEntities(EntityOptions options)
+    {
+        _options = options;
+    }
 
     public abstract Entity CreateEntity();
 

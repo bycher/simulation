@@ -3,8 +3,12 @@ using Simulation.Models.Options;
 
 namespace Simulation.Models.Actions;
 
-public class GenerateLackingGrass(EntityOptions options) : GenerateLackingResources<Grass>(options)
+public class GenerateLackingGrass : GenerateLackingResources<Grass>
 {
+    public GenerateLackingGrass(EntityOptions options) : base(options)
+    {
+    }
+
     protected override ArrangeEntities CreateArrangeAction(EntityOptions newOptions)
     {
         return new ArrangeGrass(newOptions);

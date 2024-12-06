@@ -2,19 +2,25 @@ using Simulation.Models.Entities;
 
 namespace Simulation.Models;
 
-public class Map(int rows, int columns)
+public class Map
 {
-    public int Rows { get; set; } = rows;
-    public int Columns { get; set; } = columns;
+    public int Rows { get; init; }
+    public int Columns { get; init; }
 
     public List<Creature> Creatures => GetEntities<Creature>();
+
+    private readonly Dictionary<Position, Entity> _entities = [];
+
+    public Map(int rows, int columns)
+    {
+        Rows = rows;
+        Columns = columns;
+    }
 
     public List<T> GetEntities<T>()
     {
         return _entities.Values.Where(e => e is T).Cast<T>().ToList();
     }
-
-    private readonly Dictionary<Position, Entity> _entities = [];
 
     public bool IsPositionFree(Position position)
     {

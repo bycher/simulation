@@ -4,19 +4,24 @@ using Simulation.Services.Interfaces;
 
 namespace Simulation.Services;
 
-public class ResourceSearcher<TResource>(Map map) : IResourceSearcher where TResource : Entity
+public class ResourceSearcher<TResource> : IResourceSearcher where TResource : Entity
 {
-    private readonly Map _map = map;
+    private readonly Map _map;
 
     private List<Position> _visitedPositions = [];
     private Dictionary<Position, Position> _transitions = [];
     private Queue<Position> _queue = [];
 
+    public ResourceSearcher(Map map)
+    {
+        _map = map;
+    }
+
     public Queue<Position> FindResource(Position start)
     {
-        _queue = [];
         _visitedPositions = [];
         _transitions = [];
+        _queue = [];
         
         _queue.Enqueue(start);
         _visitedPositions.Add(start);
@@ -60,5 +65,12 @@ public class ResourceSearcher<TResource>(Map map) : IResourceSearcher where TRes
         path.Reverse();
 
         return new Queue<Position>(path);
+    }
+
+    private void Reset()
+    {
+        _queue = [];
+        _visitedPositions = [];
+        _transitions = [];
     }
 }

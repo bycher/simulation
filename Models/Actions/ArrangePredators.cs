@@ -5,10 +5,16 @@ using Simulation.Services;
 
 namespace Simulation.Models.Actions;
 
-public class ArrangePredators(PredatorOptions options, Map map, ILogger logger) : ArrangeEntities(options)
+public class ArrangePredators : ArrangeEntities
 {
-    private readonly Map _map = map;
-    private readonly ILogger _logger = logger;
+    private readonly Map _map;
+    private readonly ILogger _logger;
+
+    public ArrangePredators(PredatorOptions options, Map map, ILogger logger) : base(options)
+    {
+        _map = map;
+        _logger = logger;
+    }
 
     public override Entity CreateEntity()
     {
