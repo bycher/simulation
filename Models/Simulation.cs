@@ -10,7 +10,6 @@ public class Simulation
 {
     private readonly Map _map;
     private int _iterationNum;
-    private bool _isCancelled;
 
     private readonly List<Action> _initActions;
     private readonly List<Action> _turnActions;
@@ -19,6 +18,7 @@ public class Simulation
     private readonly ILogger _logger;
 
     private readonly ManualResetEvent _pauseEvent = new(true);
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
 
     public Simulation(SimulationOptions options, IMapRenderer mapRenderer, ILogger logger)
     {
@@ -34,9 +34,9 @@ public class Simulation
     {
         Initialize();
 
-        while (!_isCancelled)
+        while (!_cancellationTokenSource.IsCancellationRequested)
         {
-            StartNewIteration();
+            StartNewIteration(_cancellationTokenSource.Token);
             Thread.Sleep(1000);
         }
     }
@@ -58,7 +58,8 @@ public class Simulation
     public void Stop()
     {
         _logger.Information("Simulation is stopped!");
-        _isCancelled = true;
+        _pauseEvent.Set(); // resume if simulation is paused
+        _cancellationTokenSource.Cancel();
     }
 
     private void Initialize()
@@ -66,7 +67,7 @@ public class Simulation
         _logger.Information("Perform initialization...");
 
         foreach (var action in _initActions)
-            action.Execute(_map, ref _isCancelled);
+            action.Execute(_map, CancellationToken.None);
 
         _logger.Information("Initialization is complete!");
 
@@ -89,7 +90,7 @@ public class Simulation
         new GenerateLackingHerbivores(options.HerbivoreOptions, _map, _logger),
     ];
 
-    private void StartNewIteration()
+    private void StartNewIteration(CancellationToken cancellationToken)
     {
         _iterationNum++;
 
@@ -97,9 +98,10 @@ public class Simulation
         foreach (var action in _turnActions)
         {
             _pauseEvent.WaitOne();
-            action.Execute(_map, ref _isCancelled);
-            if (_isCancelled)
+            if (cancellationToken.IsCancellationRequested)
                 return;
+
+            action.Execute(_map, cancellationToken);
         }
         _logger.Information($"Iteration #{_iterationNum} is complete!");
 

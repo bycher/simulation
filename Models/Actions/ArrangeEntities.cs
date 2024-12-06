@@ -10,9 +10,9 @@ public abstract class ArrangeEntities(EntityOptions options) : Action
 
     public abstract Entity CreateEntity();
 
-    public override void Execute(Map map, ref bool isCancelled)
+    public override void Execute(Map map, CancellationToken cancellationToken)
     {
-        for (int i = 0; i < _options.Number && !isCancelled; i++)
+        for (int i = 0; i < _options.Number && !cancellationToken.IsCancellationRequested; i++)
         {
             do
             {

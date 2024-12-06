@@ -7,14 +7,14 @@ public class MoveCreatures(IMapRenderer mapRenderer, ManualResetEvent pauseEvent
     private readonly IMapRenderer _mapRenderer = mapRenderer;
     private readonly ManualResetEvent _pauseEvent = pauseEvent;
 
-    public override void Execute(Map map, ref bool isCancelled)
+    public override void Execute(Map map, CancellationToken cancellationToken)
     {
         foreach (var creature in map.Creatures)
         {
             _pauseEvent.WaitOne();
-            if (isCancelled)
+            if (cancellationToken.IsCancellationRequested)
                 return;
-                
+
             creature.MakeMove(map);
             _mapRenderer.Render(map);
             Thread.Sleep(2000);

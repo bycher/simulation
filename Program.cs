@@ -31,7 +31,7 @@ internal class Program
                 simulationOptions, new ConsoleMapRenderer(), logger);
             
             var inputListener = new InputListener(simulation);
-            inputListener.Listen(); // starts as background thread
+            inputListener.Listen();
 
             simulation.Start();
         }

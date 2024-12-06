@@ -10,7 +10,7 @@ public abstract class GenerateLackingResources<T>(EntityOptions options) : Actio
 
     protected abstract ArrangeEntities CreateArrangeAction(EntityOptions newOptions);
 
-    public override void Execute(Map map, ref bool isCancelled)
+    public override void Execute(Map map, CancellationToken cancellationToken)
     {
         var resourceCount = map.GetEntities<T>().Count;
         
@@ -18,6 +18,6 @@ public abstract class GenerateLackingResources<T>(EntityOptions options) : Actio
         {
             Number = _options.Number - resourceCount
         });
-        arrangeAction.Execute(map, ref isCancelled);
+        arrangeAction.Execute(map, cancellationToken);
     }
 }
