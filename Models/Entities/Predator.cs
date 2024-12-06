@@ -12,23 +12,21 @@ public class Predator(PredatorOptions options, Position currentPosition,
 
     protected override bool TryConsumeResource(Map map, Position position)
     {
-        map.TryGetEntity(position, out var entity);
+        if (!map.TryGetEntity(position, out var entity))
+            throw new KeyNotFoundException($"No resource found at position {position}");
+
         var herbivore = (Herbivore)entity!;
 
         herbivore.Health -= Attack;
         if (herbivore.Health <= 0)
         {
             _logger.Information($"Predator killed the herbivore at {position}");
-            map.RemoveEntity(position);
-            FindNewPath(position);
-        }
-        else
-        {
-            _logger.Information($"Predator at {_currentPosition} attacked the herbivore at {position}," +
-                            $" remaining health: {herbivore.Health}");
-            _stepsInPath--;
+            return map.RemoveEntity(position);
         }
 
-        return herbivore.Health <= 0;
+        _logger.Information(
+            $"Predator at {_currentPosition} attacked the herbivore at {position} " +
+            $"(remaining health: {herbivore.Health})");
+        return false;
     }
 }

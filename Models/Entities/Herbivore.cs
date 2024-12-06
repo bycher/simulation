@@ -11,8 +11,6 @@ public class Herbivore(CreatureOptions options, Position currentPosition,
     protected override bool TryConsumeResource(Map map, Position position)
     {
         _logger.Information($"Herbivore found the grass at {position} and eat it");
-        map.RemoveEntity(position);
-        FindNewPath(position);
-        return true;
+        return map.RemoveEntity(position);
     }
 }

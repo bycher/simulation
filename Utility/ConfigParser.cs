@@ -46,15 +46,15 @@ public class ConfigParser(string fileName, ILogger logger)
 
     private static bool ValidateJson(string json)
     {
-        var validPropertyNames = typeof(SimulationOptions).GetProperties().Select(p => JsonNamingPolicy.CamelCase.ConvertName(p.Name));
+        var validPropertyNames = typeof(SimulationOptions)
+            .GetProperties()
+            .Select(p => JsonNamingPolicy.CamelCase.ConvertName(p.Name));
 
         var document = JsonDocument.Parse(json);
         foreach (var property in document.RootElement.EnumerateObject())
         {
             if (!validPropertyNames.Contains(property.Name))
-            {
                 throw new JsonException($"Unknown property: \"{property.Name}\"");
-            }
         }
         return true;
     }

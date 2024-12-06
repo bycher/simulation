@@ -10,11 +10,14 @@ public class ResourceSearcher<TResource>(Map map) : IResourceSearcher where TRes
 
     private List<Position> _visitedPositions = [];
     private Dictionary<Position, Position> _transitions = [];
-    private Queue<Position> _queue = new();
+    private Queue<Position> _queue = [];
 
-    public List<Position> FindResource(Position start)
+    public Queue<Position> FindResource(Position start)
     {
-        Reset();
+        _queue = [];
+        _visitedPositions = [];
+        _transitions = [];
+        
         _queue.Enqueue(start);
         _visitedPositions.Add(start);
 
@@ -23,25 +26,18 @@ public class ResourceSearcher<TResource>(Map map) : IResourceSearcher where TRes
             var position = _queue.Dequeue();
             if (_map.CheckForEntityType<TResource>(position))
                 return ConstructPath(start, position);
-                
+
             ProcessAdjacentPositions(position);
         }
 
         return [];
     }
 
-    public void Reset()
-    {
-        _queue = [];
-        _visitedPositions = [];
-        _transitions = [];
-    }
-
     private void ProcessAdjacentPositions(Position position)
     {
         foreach (var adjacent in position.Adjacents)
         {
-            if (position.IsInsideMap(_map) && !_visitedPositions.Contains(adjacent) &&
+            if (adjacent.IsInsideMap(_map) && !_visitedPositions.Contains(adjacent) &&
                 (_map.IsPositionFree(adjacent) || _map.CheckForEntityType<TResource>(adjacent)))
             {
                 _visitedPositions.Add(adjacent);
@@ -51,7 +47,7 @@ public class ResourceSearcher<TResource>(Map map) : IResourceSearcher where TRes
         }
     }
 
-    private List<Position> ConstructPath(Position start, Position finish)
+    private Queue<Position> ConstructPath(Position start, Position finish)
     {
         List<Position> path = [];
         var position = finish;
@@ -63,6 +59,6 @@ public class ResourceSearcher<TResource>(Map map) : IResourceSearcher where TRes
         }
         path.Reverse();
 
-        return path;
+        return new Queue<Position>(path);
     }
 }

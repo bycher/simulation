@@ -4,6 +4,5 @@ namespace Simulation.Services.Interfaces;
 
 public interface IResourceSearcher
 {
-    void Reset();
-    List<Position> FindResource(Position start);
+    Queue<Position> FindResource(Position start);
 }

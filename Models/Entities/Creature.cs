@@ -7,8 +7,7 @@ namespace Simulation.Models.Entities;
 public abstract class Creature(CreatureOptions options, Position currentPosition) : Entity(options)
 {
     protected Position _currentPosition = currentPosition;
-    protected List<Position> _path = [];
-    protected int _stepsInPath;
+    protected Queue<Position> _path = [];
 
     public int Speed { get; set; } = options.Speed;
     public int Health { get; set; } = options.Health;
@@ -27,18 +26,21 @@ public abstract class Creature<TResource>(CreatureOptions options, Position curr
 
     public override void MakeMove(Map map)
     {
-        FindNewPath(_currentPosition);
+        _path = _resourceSearcher.FindResource(_currentPosition);
 
-        for (var _ = 0; _ < Speed && _path.Count > 0; _++)
+        for (int _ = 0; _ < Speed; _++)
         {
-            var nextPosition = _path[_stepsInPath++];
-            if (_stepsInPath == _path.Count)
+            if (!_path.TryDequeue(out var nextPosition))
+                break;
+
+            if (map.CheckForEntityType<TResource>(nextPosition))
             {
                 if (TryConsumeResource(map, nextPosition))
-                    ChangePosition(map, nextPosition);
+                    _path = _resourceSearcher.FindResource(_currentPosition);
+                else
+                    continue;
             }
-            else
-                ChangePosition(map, nextPosition);
+            ChangePosition(map, nextPosition);
         }
     }
 
@@ -49,12 +51,5 @@ public abstract class Creature<TResource>(CreatureOptions options, Position curr
 
         _logger.Information($"{GetType().Name} made step from {_currentPosition} to {newPosition}");
         _currentPosition = newPosition;
-    }
-
-    protected void FindNewPath(Position position)
-    {
-        _resourceSearcher.Reset();
-        _path = _resourceSearcher.FindResource(position);
-        _stepsInPath = 0;
     }
 }
