@@ -36,7 +36,7 @@ public abstract class Creature<TResource>(CreatureOptions options, Position curr
             if (map.CheckForEntityType<TResource>(nextPosition))
             {
                 if (TryConsumeResource(map, nextPosition))
-                    _path = _resourceSearcher.FindResource(_currentPosition);
+                    _path = _resourceSearcher.FindResource(nextPosition);
                 else
                     continue;
             }

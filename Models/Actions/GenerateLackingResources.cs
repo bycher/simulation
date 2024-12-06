@@ -8,13 +8,16 @@ public abstract class GenerateLackingResources<T>(EntityOptions options) : Actio
 {
     private readonly EntityOptions _options = options;
 
-    protected abstract ArrangeEntities SetArrangeAction(Map map, EntityOptions newOptions);
+    protected abstract ArrangeEntities CreateArrangeAction(EntityOptions newOptions);
 
     public override void Execute(Map map, ref bool isCancelled)
     {
         var resourceCount = map.GetEntities<T>().Count;
-        var newOptions = _options with { Number = _options.Number - resourceCount };
-        var arrangeAction = SetArrangeAction(map, newOptions);
+        
+        var arrangeAction = CreateArrangeAction(_options with
+        {
+            Number = _options.Number - resourceCount
+        });
         arrangeAction.Execute(map, ref isCancelled);
     }
 }

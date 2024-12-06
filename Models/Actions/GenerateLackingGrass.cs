@@ -5,7 +5,7 @@ namespace Simulation.Models.Actions;
 
 public class GenerateLackingGrass(EntityOptions options) : GenerateLackingResources<Grass>(options)
 {
-    protected override ArrangeEntities SetArrangeAction(Map map, EntityOptions newOptions)
+    protected override ArrangeEntities CreateArrangeAction(EntityOptions newOptions)
     {
         return new ArrangeGrass(newOptions);
     }

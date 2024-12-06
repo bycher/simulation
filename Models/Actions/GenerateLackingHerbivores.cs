@@ -4,13 +4,14 @@ using Simulation.Models.Options;
 
 namespace Simulation.Models.Actions;
 
-public class GenerateLackingHerbivores(CreatureOptions options, ILogger logger)
+public class GenerateLackingHerbivores(CreatureOptions options, Map map, ILogger logger)
     : GenerateLackingResources<Herbivore>(options)
 {
+    private readonly Map _map = map;
     private readonly ILogger _logger = logger;
 
-    protected override ArrangeEntities SetArrangeAction(Map map, EntityOptions newOptions)
+    protected override ArrangeEntities CreateArrangeAction(EntityOptions newOptions)
     {
-        return new ArrangeHerbivores((CreatureOptions)newOptions, map, _logger);
+        return new ArrangeHerbivores((CreatureOptions)newOptions, _map, _logger);
     }
 }

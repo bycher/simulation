@@ -86,7 +86,7 @@ public class Simulation
     [
         new MoveCreatures(_mapRenderer, _pauseEvent),
         new GenerateLackingGrass(options.GrassOptions),
-        new GenerateLackingHerbivores(options.HerbivoreOptions, _logger),
+        new GenerateLackingHerbivores(options.HerbivoreOptions, _map, _logger),
     ];
 
     private void StartNewIteration()
