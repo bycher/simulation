@@ -27,7 +27,7 @@ public class ConfigParser(string fileName, ILogger logger)
         {
             var json = File.ReadAllText(_path);
             ValidateJson(json);
-            simulationOptions = ParseJson(json);
+            simulationOptions = JsonSerializer.Deserialize<SimulationOptions>(json, _serializerOptions);
         }
         catch (Exception e)
         {
@@ -37,11 +37,6 @@ public class ConfigParser(string fileName, ILogger logger)
 
         _logger.Information("Config file parsed successfully!");
         return true;
-    }
-
-    private SimulationOptions? ParseJson(string json)
-    {
-        return JsonSerializer.Deserialize<SimulationOptions>(json, _serializerOptions);
     }
 
     private static bool ValidateJson(string json)

@@ -16,7 +16,10 @@ internal class Program
     public static void Main()
     {
         var logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
+            .MinimumLevel.Is(
+                System.Diagnostics.Debugger.IsAttached
+                    ? LogEventLevel.Debug
+                    : LogEventLevel.Information)
             .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Error)
             .WriteTo.File(LogsFilePath, outputTemplate: LogsFileTemplate)
             .CreateLogger();

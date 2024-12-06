@@ -45,30 +45,30 @@ public class Simulation
     {
         if (_pauseEvent.WaitOne(0))
         {
-            _logger.Information("Simulation is paused");
+            _logger.Information("Simulation is paused...");
             _pauseEvent.Reset();
         }
         else
         {
-            _logger.Information("Simulation is resumed");
+            _logger.Information("Simulation is resumed...");
             _pauseEvent.Set();
         }
     }
 
     public void Stop()
     {
-        _logger.Information("Simulation is stopped");
+        _logger.Information("Simulation is stopped!");
         _isCancelled = true;
     }
 
     private void Initialize()
     {
-        _logger.Information("Perform initialization");
+        _logger.Information("Perform initialization...");
 
         foreach (var action in _initActions)
             action.Execute(_map, ref _isCancelled);
 
-        _logger.Information("Initialization is complete");
+        _logger.Information("Initialization is complete!");
 
         _mapRenderer.Render(_map);
     }
@@ -93,7 +93,7 @@ public class Simulation
     {
         _iterationNum++;
 
-        _logger.Information($"Starting iteration #{_iterationNum}");
+        _logger.Information($"Starting iteration #{_iterationNum}...");
         foreach (var action in _turnActions)
         {
             _pauseEvent.WaitOne();
@@ -101,7 +101,7 @@ public class Simulation
             if (_isCancelled)
                 return;
         }
-        _logger.Information($"Iteration #{_iterationNum} is complete");
+        _logger.Information($"Iteration #{_iterationNum} is complete!");
 
         _mapRenderer.Render(_map);
     }

@@ -27,7 +27,7 @@ public abstract class Creature<TResource>(CreatureOptions options, Position curr
     public override void MakeMove(Map map)
     {
         _path = _resourceSearcher.FindResource(_currentPosition);
-
+        var initialPosition = _currentPosition;
         for (int _ = 0; _ < Speed; _++)
         {
             if (!_path.TryDequeue(out var nextPosition))
@@ -42,6 +42,7 @@ public abstract class Creature<TResource>(CreatureOptions options, Position curr
             }
             ChangePosition(map, nextPosition);
         }
+        _logger.Information($"{GetType().Name} made step from {initialPosition} to {_currentPosition}");
     }
 
     private void ChangePosition(Map map, Position newPosition)
@@ -49,7 +50,7 @@ public abstract class Creature<TResource>(CreatureOptions options, Position curr
         map.RemoveEntity(_currentPosition);
         map.PlaceEntity(newPosition, this);
 
-        _logger.Information($"{GetType().Name} made step from {_currentPosition} to {newPosition}");
+        _logger.Debug($"{GetType().Name} made step from {_currentPosition} to {newPosition}");
         _currentPosition = newPosition;
     }
 }
