@@ -6,7 +6,7 @@ using Action = Simulation.Models.Actions.Action;
 
 namespace Simulation.Models;
 
-public class Simulation
+public sealed class Simulation : IDisposable
 {
     private readonly Map _map;
     private int _iterationNum;
@@ -43,7 +43,7 @@ public class Simulation
 
     public void TogglePause()
     {
-        if (_pauseEvent.WaitOne(0))
+        if (_pauseEvent.WaitOne())
         {
             _logger.Information("Simulation is paused...");
             _pauseEvent.Reset();
@@ -58,7 +58,7 @@ public class Simulation
     public void Stop()
     {
         _logger.Information("Simulation is stopped!");
-        _pauseEvent.Set(); // resume if simulation is paused
+        _pauseEvent.Set(); // resume if paused
         _cancellationTokenSource.Cancel();
     }
 
@@ -106,5 +106,11 @@ public class Simulation
         _logger.Information($"Iteration #{_iterationNum} is complete!");
 
         _mapRenderer.Render(_map);
+    }
+
+    public void Dispose()
+    {
+        _pauseEvent.Dispose();
+        _cancellationTokenSource.Dispose();
     }
 }

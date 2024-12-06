@@ -6,25 +6,15 @@ public class InputListener(Models.Simulation simulation)
 
     public void Listen()
     {
-        new Thread(() =>
+        ConsoleKey key;
+        do
         {
-            ConsoleKey key;
-            do
-            {
-                key = Console.ReadKey(true).Key;
-
-                if (key == ConsoleKey.Spacebar)
-                {
-                    _simulation.TogglePause();
-                }
-            }
-            while (key != ConsoleKey.Escape);
-
-            _simulation.Stop();
-        })
-        {
-            IsBackground = true
+            key = Console.ReadKey(true).Key;
+            if (key == ConsoleKey.Spacebar)
+                _simulation.TogglePause();
         }
-        .Start();
+        while (key != ConsoleKey.Escape);
+
+        _simulation.Stop();
     }
 }

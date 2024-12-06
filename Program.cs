@@ -13,7 +13,7 @@ internal class Program
     private static readonly string LogsFileTemplate = 
         "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}";
 
-    public static void Main()
+    public static async Task Main()
     {
         var logger = new LoggerConfiguration()
             .MinimumLevel.Is(
@@ -29,11 +29,13 @@ internal class Program
         {
             var simulation = new Simulation.Models.Simulation(
                 simulationOptions, new ConsoleMapRenderer(), logger);
-            
+
+            var simulationTask = Task.Run(simulation.Start);
+
             var inputListener = new InputListener(simulation);
             inputListener.Listen();
 
-            simulation.Start();
+            await simulationTask;
         }
     }
 }
