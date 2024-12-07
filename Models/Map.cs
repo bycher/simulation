@@ -7,6 +7,8 @@ public class Map
     public int Rows { get; init; }
     public int Columns { get; init; }
 
+    public bool IsFilledIn => _entities.Count == Rows * Columns;
+
     public List<Creature> Creatures => GetEntities<Creature>();
 
     private readonly Dictionary<Position, Entity> _entities = [];

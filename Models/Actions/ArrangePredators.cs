@@ -5,7 +5,7 @@ using Simulation.Services;
 
 namespace Simulation.Models.Actions;
 
-public class ArrangePredators : ArrangeEntities
+public class ArrangePredators : ArrangeEntities<Predator>
 {
     private readonly Map _map;
     private readonly ILogger _logger;
@@ -16,7 +16,7 @@ public class ArrangePredators : ArrangeEntities
         _logger = logger;
     }
 
-    public override Entity CreateEntity()
+    public override Predator CreateEntity()
     {
         var resourceSearcher = new ResourceSearcher<Herbivore>(_map);
         return new Predator((PredatorOptions)_options, _position, resourceSearcher, _logger);

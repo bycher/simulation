@@ -20,6 +20,8 @@ public sealed class Simulation : IDisposable
     private readonly ManualResetEvent _pauseEvent = new(true);
     private readonly CancellationTokenSource _cancellationTokenSource = new();
 
+    public bool IsCancelled => _cancellationTokenSource.IsCancellationRequested;
+
     public Simulation(SimulationOptions options, IMapRenderer mapRenderer, ILogger logger)
     {
         _map = new(options.Rows, options.Columns);
@@ -32,12 +34,21 @@ public sealed class Simulation : IDisposable
 
     public int Start()
     {
-        Initialize();
-
-        while (!_cancellationTokenSource.IsCancellationRequested)
+        try
         {
-            StartNewIteration(_cancellationTokenSource.Token);
-            Thread.Sleep(1000);
+            Initialize();
+
+            while (!IsCancelled)
+            {
+                StartNewIteration();
+                Thread.Sleep(1000);
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.Error(e.Message);
+            _cancellationTokenSource.Cancel();
+            return 1;
         }
 
         return 0;
@@ -92,7 +103,7 @@ public sealed class Simulation : IDisposable
         new GenerateLackingHerbivores(options.HerbivoreOptions, _map, _logger),
     ];
 
-    private void StartNewIteration(CancellationToken cancellationToken)
+    private void StartNewIteration()
     {
         _iterationNum++;
 
@@ -100,10 +111,10 @@ public sealed class Simulation : IDisposable
         foreach (var action in _turnActions)
         {
             _pauseEvent.WaitOne();
-            if (cancellationToken.IsCancellationRequested)
+            if (IsCancelled)
                 return;
 
-            action.Execute(_map, cancellationToken);
+            action.Execute(_map, _cancellationTokenSource.Token);
         }
         _logger.Information($"Iteration #{_iterationNum} is complete!");
 

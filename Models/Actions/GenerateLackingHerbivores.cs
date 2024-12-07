@@ -15,7 +15,7 @@ public class GenerateLackingHerbivores : GenerateLackingResources<Herbivore>
         _logger = logger;
     }
 
-    protected override ArrangeEntities CreateArrangeAction(EntityOptions newOptions)
+    protected override ArrangeHerbivores CreateArrangeAction(EntityOptions newOptions)
     {
         return new ArrangeHerbivores((CreatureOptions)newOptions, _map, _logger);
     }

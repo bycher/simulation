@@ -18,12 +18,12 @@ public class SimulateCommand : AsyncCommand<SimulateCommandSettings>
         {
             var simulation = new Models.Simulation(
                 simulationOptions!, new ConsoleMapRenderer(), logger);
-
+                
             var simulationTask = Task.Run(simulation.Start);
 
-            var inputListener = new InputListener(simulation);
+            var inputListener = new InputListener(simulation);  
             inputListener.Listen();
-
+            
             return await simulationTask;
         }
 

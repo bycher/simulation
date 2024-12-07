@@ -7,7 +7,7 @@
         "image": "🗿"
     },
     "treeOptions": {
-        "number": 5,
+        "number": 10,
         "image": "🌳"
     },
     "grassOptions": {
@@ -21,7 +21,7 @@
         "image": "🐮"
     },
     "predatorOptions": {
-        "number": 4,
+        "number": 400,
         "speed": 5,
         "health": 1,
         "attack": 2,

@@ -3,13 +3,13 @@ using Simulation.Models.Options;
 
 namespace Simulation.Models.Actions;
 
-public class ArrangeGrass : ArrangeEntities
+public class ArrangeGrass : ArrangeEntities<Grass>
 {
     public ArrangeGrass(EntityOptions options) : base(options)
     {
     }
 
-    public override Entity CreateEntity()
+    public override Grass CreateEntity()
     {
         return new Grass(_options);
     }

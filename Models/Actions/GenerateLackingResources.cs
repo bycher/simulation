@@ -13,7 +13,7 @@ public abstract class GenerateLackingResources<T> : Action where T : Entity
         _options = options;
     }
 
-    protected abstract ArrangeEntities CreateArrangeAction(EntityOptions newOptions);
+    protected abstract ArrangeEntities<T> CreateArrangeAction(EntityOptions newOptions);
 
     public override void Execute(Map map, CancellationToken cancellationToken)
     {
@@ -22,7 +22,7 @@ public abstract class GenerateLackingResources<T> : Action where T : Entity
         {
             Number = _options.Number - resourceCount
         });
-        
+
         arrangeAction.Execute(map, cancellationToken);
     }
 }

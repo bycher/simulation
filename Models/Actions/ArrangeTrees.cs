@@ -3,13 +3,13 @@ using Simulation.Models.Options;
 
 namespace Simulation.Models.Actions;
 
-public class ArrangeTrees : ArrangeEntities
+public class ArrangeTrees : ArrangeEntities<Tree>
 {
     public ArrangeTrees(EntityOptions options) : base(options)
     {
     }
 
-    public override Entity CreateEntity()
+    public override Tree CreateEntity()
     {
         return new Tree(_options);
     }

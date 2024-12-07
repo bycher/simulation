@@ -9,7 +9,7 @@ public class GenerateLackingGrass : GenerateLackingResources<Grass>
     {
     }
 
-    protected override ArrangeEntities CreateArrangeAction(EntityOptions newOptions)
+    protected override ArrangeGrass CreateArrangeAction(EntityOptions newOptions)
     {
         return new ArrangeGrass(newOptions);
     }

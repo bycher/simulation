@@ -11,15 +11,17 @@ public class InputListener
 
     public void Listen()
     {
-        ConsoleKey key;
-        do
+        while (!_simulation.IsCancelled)
         {
-            key = Console.ReadKey(true).Key;
-            if (key == ConsoleKey.Spacebar)
-                _simulation.TogglePause();
+            if (Console.KeyAvailable)
+            {
+                var key = Console.ReadKey(true).Key;
+                if (key == ConsoleKey.Spacebar)
+                    _simulation.TogglePause();
+                if (key == ConsoleKey.Escape)
+                    break;
+            }
         }
-        while (key != ConsoleKey.Escape);
-
         _simulation.Stop();
     }
 }
