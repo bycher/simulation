@@ -30,7 +30,7 @@ public sealed class Simulation : IDisposable
         _turnActions = ConfigureTurnActions(options);
     }
 
-    public void Start()
+    public int Start()
     {
         Initialize();
 
@@ -39,11 +39,13 @@ public sealed class Simulation : IDisposable
             StartNewIteration(_cancellationTokenSource.Token);
             Thread.Sleep(1000);
         }
+
+        return 0;
     }
 
     public void TogglePause()
     {
-        if (_pauseEvent.WaitOne())
+        if (_pauseEvent.WaitOne(0))
         {
             _logger.Information("Simulation is paused...");
             _pauseEvent.Reset();
